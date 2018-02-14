@@ -1,0 +1,99 @@
+---
+layout: post
+status: publish
+published: true
+title: 'DevOps Handbook Series Part 3: Exploit Continuous Delivery'
+author:
+  display_name: Stefan Thorpe
+  login: stefan
+  email: stefan@caylent.com
+  url: ''
+author_login: stefan
+author_email: stefan@caylent.com
+wordpress_id: 2257
+wordpress_url: https://caylent.com/?p=2257
+date: '2017-12-15 06:00:12 +0200'
+date_gmt: '2017-12-15 14:00:12 +0200'
+categories:
+- DevOps
+- DevOps Handbook
+tags:
+- Defining DevOps Teams
+- Conway's Law
+- Automated Testing
+- Manual Testing
+- Andon Cord
+comments: []
+---
+<p>As ever, don&rsquo;t forget to read up on the previous installments to get a full, clear picture of The DevOps Handbook.</p>
+<h1>The DevOps Handbook Summary Series (so far):</h1>
+<ul>
+<li><a href="http://caylent.com/devops-handbook-introduction-summary" target="_blank" rel="noopener">Introduction Summary</a></li>
+<li><a href="https://caylent.com/devops-handbook-part-1-the-three-ways/" target="_blank" rel="noopener">1: Establishing the Three Ways</a></li>
+<li><a href="https://caylent.com/devops-handbook-part-1-the-three-ways-cont/" target="_blank" rel="noopener">1: The Three Ways Continued</a></li>
+<li><a href="https://caylent.com/devops-handbook-part-2-devops-methodology/" target="_blank" rel="noopener">2: Beginning the DevOps Methodology</a></li>
+<li><a href="https://caylent.com/devops-handbook-part-2-defining-devops-teams/" target="_blank" rel="noopener">2: Defining DevOps Teams</a></li>
+</ul>
+<p>This week, we examine how to execute the technical practices that create The First Way: Flow. Parts 3-5 of The Handbook explore in greater detail the realization of The Three Ways and its core principles. Without which, your DevOps transformation cannot succeed to its full potential.</p>
+<h2>Establishing Continuous Delivery to Enable Flow</h2>
+<p>To enhance the flow of work in the technology value stream between Development and Operations, it is essential to implement Continuous Delivery. This set of technical practices serve to reduce the risks that occur in production when deploying code and releasing changes.</p>
+<p>The focus of the first two chapters of Part 3 in The DevOps Handbook is about laying the foundation for your deployment pipeline and facilitating the continuous integration of quick and reliable automated tests. These factors will help ensure that we are releasing code daily on a routine basis in a low-risk, deployable state which optimizes our continuous delivery environment architecture.</p>
+<p>Using production-like environments throughout the value stream ensures that we pro-actively build applications with fault-finding in mind. Rather than discovering issues during production deployment as the traditional method dictates.</p>
+<h3>This&nbsp;Continuous Delivery&nbsp;strategy calls for teams to:</h3>
+<ul>
+<li><strong>&ldquo;Enable on Demand Creation of Dev, Test, and Production Environments."&nbsp;</strong>The most significant factor behind issues that crop up during software releases tends to be because only in deployment do we introduce apps to a production-like environment. Instead, enable Devs to create and run on demand and self-serviced test environments at their workstation. Achieve this by defining and creating an automated common build mechanism for all environments.</li>
+<li><strong>&ldquo;Create Our Single Repository of Truth for the Entire System.&rdquo;</strong> Ensure that all elements of the software system are accessible to the entire DevOps team within a shared version control repository. Documenting any changes and revisions to both code and environments within this &lsquo;Single Repository of Truth&rsquo; allows everyone to compare, combine, and revert to previous revisions as needed. Optimizing version control is &ldquo;<a href="https://puppet.com/resources/whitepaper/state-of-devops-report" target="_blank" rel="noopener">the highest predictor of both IT performance and organizational performance</a>.&rdquo;</li>
+<li><strong>&ldquo;Make Infrastructure Easier to Rebuild Than to Repair.&rdquo;</strong> The capability to restore and recreate our apps and environments on demand ensures that we can rebuild, rather than repair, when we encounter issues. These repeatable environment creation systems enable us to increase server capacity and avoid disaster quickly.</li>
+<li><strong>&ldquo;Modify Our Definition of Development 'Done' to Include Running in Production-Like Environments.&rdquo;</strong> Modern software development methodologies advocate short and iterative development intervals to fuel continuous integration. As opposed to singular large software releases which inevitably create more issues. The Scrum sprint is a great example of this short time frame which increases productivity and aims for working shippable code at the end of each interval.</li>
+</ul>
+<h2>Approve Automated Testing</h2>
+<p>Having implemented practices which enable the successful integration of version controlled production-like environments throughout the value system, it is important to merge automated testing too.<br />
+Continuous integration practices automatically test code against any number of automated tests. This means that instead of discovering problems months after the code is developed archaeologically, teams can find and fix mistakes at an amazing pace.</p>
+<h3>Aim to:</h3>
+<ul>
+<li><strong>&ldquo;Continuously Build, Test, and Integrate Our Code and Environments.&rdquo;</strong> Make automated tests a daily part of your team&rsquo;s work. Achieve this by creating a deployment pipeline that runs in dedicated environments and performs code integration whenever a new change is submitted to version control. This continuous integration begins with executing the commit stage&mdash;code build/packaging&mdash;before implementing automated unity tests and other validation including analysis of static code, duplication/test coverage analysis, and style checking. The result: a green build (where everything in version control is in a deployable state).</li>
+</ul>
+<p><img class="size-full wp-image-2259" src="https://caylent.com/wp-content/uploads/2017/12/Deployment-pipeline.png" alt="The DevOps Handbook Deployment Pipeline" width="889" height="217" /></p>
+<h5 style="text-align: center;"><em>The Deployment Pipeline: The DevOps Handbook (1st ed. 2016) Kim et al.</em></h5>
+<p>&nbsp;</p>
+<ul>
+<li><strong>&ldquo;Build a Fast and Reliable Automated Validation Test Suite.&rdquo;</strong> If tests are only run on an intermittent basis, we expose our value system to slow and periodic feedback. Alternatively, run fast automated tests in a production-like environment everytime a new change is checked into the version control. In this manner, work batches remain small, code is in a consistently deployable state, and errors are located and fixed quickly before gaining a chance to escalate. Automated tests fall into the following types:
+<ul>
+<li><em>Unit tests:</em> Which test the designed operation of individual components or functions within the application</li>
+</ul>
+</li>
+<li style="list-style-type: none;">
+<ul>
+<li><em>Acceptance tests:&nbsp;</em>To test the overall design and functionality of the application</li>
+<li><em>Integration tests:&nbsp;</em>These test that the build (which should pass unit and acceptance tests) interacts appropriately with other services and products</li>
+</ul>
+</li>
+<li><strong>&ldquo;Catch Errors as Early in Our Automated Testing as Possible.&rdquo;</strong> Running faster-automated tests (unit tests) before slower ones (acceptance/integration tests) enables early error detection. Martin Fowler&rsquo;s &ldquo;ideal testing pyramid&rdquo; optimizes the flow of testing by recommending the creation of an automated unit test to locate any error discovered by an acceptance/integration test. Thus, improving the continuous delivery feedback loop.</li>
+</ul>
+<p><img class="wp-image-2258 size-full" src="https://caylent.com/wp-content/uploads/2017/12/Ideal-Vs.-Non-Testing-Pyramids.png" alt="The DevOps Handbook Ideal Vs. Non Testing Pyramids" width="851" height="488" /></p>
+<h5 style="text-align: center;"><em> Ideal Vs. Non Testing Pyramids: The DevOps Handbook (1st ed. 2016) Kim et al.</em></h5>
+<p>&nbsp;</p>
+<ul>
+<li><strong>&ldquo;Ensure Tests Run Quickly (in Parallel, If Necessary).&rdquo;</strong>&nbsp;Design tests to run in parallel. This will maximize speed. All testers (including devs) should be able to test the latest build in version control. Rather than having to wait for a build to be flagged.</li>
+</ul>
+<p><img class="wp-image-2260 size-full" src="https://caylent.com/wp-content/uploads/2017/12/Running-automated-and-manual-tests-in-parallel.png" alt="Running Automated and Manual Tests in Parallel: The DevOps Handbook" width="862" height="494" /></p>
+<h5 style="text-align: center;"><em>Running Automated and Manual Tests in Parallel: The DevOps Handbook (1st Ed. 2016) Kim et al.</em></h5>
+<p>&nbsp;</p>
+<ul>
+<li><strong>&ldquo;Write Our Automated Tests Before We Write the Code ('Test-Driven Development').&rdquo;</strong> To guarantee the use of automated testing, DevOps teams should integrate test writing into their daily work. This method works best by writing tests with the expectation that they will <em>fail. </em>Developers should then write the code in a way that passes the tests. Follow this method:
+<ul>
+<li>Write a test that will fail the functionality you are creating ➨Check in</li>
+<li>Write the code to pass the test ➨ Check in</li>
+<li>Rework old and new code to improve structure ➨ Ensure tests pass ➨ Check in</li>
+</ul>
+</li>
+<li><strong>&ldquo;Automate as Many of Our Manual Tests as Possible.&rdquo;</strong> Automating testing ensures that our developers are put to more high-quality use on activities that cannot be automated. This strategy only works if tests are reliable. Undesirable outcomes such as false positives are a waste of valuable time and increase the stress load on tests and developers.</li>
+<li><strong>&ldquo;Integrate Performance Testing into Our Test Suite.&rdquo;</strong> Rather than waiting to discover performance issues at an application&rsquo;s deployment stage, teams should endeavor to write and run performance tests throughout the delivery pipeline. Building the performance test environment early in the project is the key to avoiding its construction becoming more complex than the application&rsquo;s actual production environment.</li>
+<li><strong>&ldquo;Pull Our Andon Cord When the Deployment Pipeline Breaks.&rdquo;</strong> Create a virtual <a href="https://itrevolution.com/kata/" target="_blank" rel="noopener">Andon Cord</a> which implements a &ldquo;no new work&rdquo; rule. This will make rollbacks easier and keep maintaining a &lsquo;green build&rsquo; in the deployment pipeline possible. It also encourages the active team goal of consistently restoring to a green state. Such virtual Andon Cords should notify every on-call tester and developer, inciting a swarm to fix the problem. This is especially helpful during the later stages of production as opposed to just stopping new work. Visible/audio indicators are extremely helpful for when build/automated tests fail</li>
+<li><strong>&ldquo;Why We Need to Pull the Andon Cord.&rdquo;</strong> Failing to pull the Andon Cord will only increase the potential risk of finding problems in production. At this point, we are also subject to all the undesirable issues that come with &ldquo;big bang integrations&rdquo; such as feature delivery grinds, major firefighting, and archaeology&mdash;working on issues from a long time ago.</li>
+</ul>
+<p>&nbsp;</p>
+<p>Check out the next installment now,&nbsp;<a href="https://caylent.com/devops-handbook-part-3-continuous-integration/" target="_blank" rel="noopener">DevOps Handbook Series Part 3: Practice Continuous Integration</a></p>
+<hr />
+<p><span style="font-size: xx-small;">Reference material:<br />
+Kim, G., Debois, P., Willis, J., &amp; Humble, J. (2016). <em><a href="https://www.amazon.com/DevOps-Handbook-World-Class-Reliability-Organizations/dp/1942788002" target="_blank" rel="noopener">The DevOps handbook: how to create world-class agility, reliability, and security in technology organizations</a>.</em> Portland, OR: IT Revolution Press, LLC.</span></p>

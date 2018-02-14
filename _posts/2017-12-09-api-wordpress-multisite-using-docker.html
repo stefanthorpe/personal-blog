@@ -1,0 +1,92 @@
+---
+layout: post
+status: publish
+published: true
+title: 10 Steps to Deploy WordPress Multisite Using Docker
+author:
+  display_name: Stefan Thorpe
+  login: stefan
+  email: stefan@caylent.com
+  url: ''
+author_login: stefan
+author_email: stefan@caylent.com
+wordpress_id: 2227
+wordpress_url: https://caylent.com/?p=2227
+date: '2017-12-09 07:00:58 +0200'
+date_gmt: '2017-12-09 15:00:58 +0200'
+categories:
+- API
+- API Tutorials
+tags:
+- API
+- Docker
+- Caylent API Tutorial
+- WordPress Multisite
+comments: []
+---
+<p>Our fourth Caylent API Tutorial is a complete step-by-step guide to creating a WordPress multisite install using Docker to realize High-Availability (HA). You can achieve this quickly by leveraging our Caylent API documentation on Postman. As ever, each of our in-depth tutorial posts come with an accompanying video tutorial on <a href="https://youtu.be/aIJ_U_w2ldE" target="_blank" rel="noopener">YouTube</a> (see below). Discover just how simple the process is using our API collection to create as many WordPress sites as you require in a matter of minutes.</p>
+<h2><strong>Requirements</strong></h2>
+<p>For this tutorial, you&rsquo;re going to need:</p>
+<ul>
+<li>An activated account with Caylent.<a href="https://app.caylent.com/signup" target="_blank" rel="noopener"> Sign up here</a>.</li>
+<li>A configured <a href="https://www.getpostman.com/" target="_blank" rel="noopener">Postman</a> account. If you haven't already set Postman up, then <a href="http://caylent.com/caylents-easy-rest-api-postman-5-steps" target="_blank" rel="noopener">check out my first tutorial</a>.</li>
+<li>A <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a> account and a published public SSH key. Follow the <a href="https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/" target="_blank" rel="noopener">GitHub guide here</a> to complete this step.</li>
+<li>Access to your <a href="https://aws.amazon.com/?nc2=h_lg" target="_blank" rel="noopener">AWS</a> account to change firewall rules.</li>
+<li>Caylent API Docs: <a href="https://docs.caylent.com/#a805ca0e-6076-4065-32a3-76d7fcbef053" target="_blank" rel="noopener">Deploy High Availability WordPress Multisite Network</a></li>
+<li><a href="https://github.com/caylent/caylent-postman-templates/blob/master/collections/Deploy_AutoScaling_Docker_Wordpress_Multisite_Cluster_On_AWS.postman_collection.json" target="_blank" rel="noopener">Caylent GitHub Postman Collections</a></li>
+</ul>
+<p>To give you an idea of what we are building, our final cluster will look like a virtual version of the image below:</p>
+<p><img class="aligncenter wp-image-2232 size-full" src="https://caylent.com/wp-content/uploads/2017/12/Multisite-cluster.png" alt="Docker WordPress Multisite Cluster" width="804" height="727" /></p>
+<p>As depicted by the illustration above, we are creating a Docker Swarm autoscaling group that contains two worker nodes, and a separate self-healing group containing three masters. These will both use a shared Amazon Elastic File System (EFS), which as the name suggests, is a storage structure that scales on demand.</p>
+<p>The Amazon EFS drive will store the Docker WordPress content, while we support the back end with a replicated version of a MySQL RDS database, and the front end will contain our Elastic Load Balancer (ELB).</p>
+<p>So, set your Postman environment to Caylent API, login, and let&rsquo;s begin!</p>
+<h2><strong>1. Create a Generic Stack</strong></h2>
+<p>As all of our tutorials demonstrate how incredibly straightforward it is to create a Caylent default Stack. Simply, click &ldquo;POST 2. Create Docker Stack&rdquo; to automatically build a stack made up of five instances, which by default includes three master servers and two workers.</p>
+<p>All properties&mdash;including stack name, timestamp, etc.&mdash;are modifiable, though Caylent will autofill default data for each. Simply name your stack, e.g., &ldquo;wordpress-multisite,&rdquo; and hit &ldquo;Send.&rdquo;</p>
+<p>The response will show that the stack status is still currently &rdquo;un-deployed.&rdquo; We&rsquo;ll need to add more services to it before we launch.</p>
+<h2><strong>2. Add MySQL Database</strong></h2>
+<p>Click &ldquo;POST 3. Create Database&rdquo; to attach a scalable relational database to the previously created stack for our Docker Wordpress application to use. Postman will automatically store all response information contained within {{...}} (such as the necessary {{stackuuid}} for this step) unless you are following the process manually, in which case make a note of all these from the response body.</p>
+<p>Remember, our Caylent API collections autofill a lot of these properties with default information to make your build process quick and straightforward. To tailor your install to your unique specifications, feel free to change parameters or any of the RDS settings that are also supported in CloudFormation.</p>
+<p>Hitting &ldquo;Send,&rdquo; will attach the MySQL RDS database to the stack. Results will show in the response body.</p>
+<h2><strong>3. Build EFS</strong></h2>
+<p>Just select &ldquo;POST 4.Create EFS&rdquo; and click &ldquo;Send.&rdquo; No changes are required here. The command attaches the EFS to all stack nodes.</p>
+<h2><strong>4. Stack Launch Process</strong></h2>
+<p>Now that everything is configured, you are ready to launch your stack. Given the added MYSQL RDS database this will take roughly around 15 minutes to complete. Choose command &ldquo;POST 5. Launch Stack&rdquo; and hit &ldquo;Send&rdquo; to begin this process.</p>
+<h2><strong>5. Create Mount</strong></h2>
+<p>To do this, specify the mount target within the container as &ldquo;var/www/html&rdquo; with the default &ldquo;{{efs}}/wordpress&rdquo; source. This adjusts the necessary dynamic {{efs}} variable for the EFS file system, mounts the container to the EFS on each host in our system, and creates a WordPress folder to store all our primary persistent data within the EFS.</p>
+<p>Hit &ldquo;Send,&rdquo; and you will later attach the mount to the stack after you configure your actual Docker WordPress multisite network container.</p>
+<h2><strong>6. Create WordPress Multisite Container</strong></h2>
+<p>Since there isn&rsquo;t an official WordPress multisite container image, <a href="https://hub.docker.com/r/caylent/wordpress-multisite/" target="_blank" rel="noopener">we have provided one</a>. It is specified by default as the &ldquo;image_uri&ldquo; : &ldquo;caylent/wordpress-multisite&rdquo; parameter.</p>
+<p>Once again, Postman will input the required dynamic and environment variables from previous response body results such as the &ldquo;database.host&rdquo; and &ldquo;database.name.&rdquo; The image below shows the specifications for the default &ldquo;number_containers&rdquo; that we wish the service to run (i.e., 5), but you can change this according to your needs. Caylent requires an odd&mdash;rather than even&mdash;number of manager nodes to workers to maintain a tie-breaking consensus.</p>
+<p>This step will prompt five containers to spin up once the install process is complete.</p>
+<p><img class="aligncenter wp-image-2229 size-full" src="https://caylent.com/wp-content/uploads/2017/12/Postman-WordPress-Multisite-Image.png" alt="Postman WordPress Multisite Image" width="668" height="365" /></p>
+<p>Hitting &ldquo;Send&rdquo; on command &ldquo;POST 7. Create WordPress Multisite App&rdquo; will attach the Wordpress multisite image to our specified stack&mdash;which will still be deploying in the background.</p>
+<h2><strong>7. Add Mount to Stack and Launch</strong></h2>
+<p>The command &ldquo;POST 8. Add Mount to App&rdquo; attaches the previously created bind mount to our WordPress multisite application in a matter of seconds.</p>
+<p>Next, we use the request &ldquo;GET 9. WordPress Stack - Loop Until Deployed Copy.&rdquo; Which, as it suggests, will run on a loop. Grab a coffee and catch a quick break while this completes, which is when the response body will register the state as &ldquo;deployed.&rdquo;</p>
+<h2><strong>8. Deploy Docker WordPress Multisite Application</strong></h2>
+<p>The penultimate step in our process is to click the command &ldquo;POST 10. Deploy WordPress App to Stack.&rdquo; This will only take a moment to complete once you hit &ldquo;Send.&rdquo;</p>
+<p>Finally, we can use the request &ldquo;GET 11. List All Nodes - Filter Stack&rdquo; to list all the nodes, load balancer endpoints, and each node IP address.</p>
+<h2><strong>8.5 Edit AWS Firewall Rules to Allow SSH Access (Optional)</strong></h2>
+<p>If you want SSH access to this Stack, you&rsquo;ll need to login to your AWS account to modify the inbound firewall rules. To do this, open the EC2 console and click on the relevant security group. Within the Security Group tab, select the &ldquo;swarm-master-group&rdquo; security group; click &ldquo;Edit the Inbound Rules;&rdquo; select &ldquo;SSH&rdquo; from the drop-down box selection; select &ldquo;MY IP;&rdquo; and hit &ldquo;Save.&rdquo;</p>
+<p><img class="aligncenter wp-image-2230 size-large" src="https://caylent.com/wp-content/uploads/2017/12/AWS-Rules-1024x464.png" alt="AWS Firewall Inbound Rules" width="1024" height="464" /></p>
+<h2><strong>9. Configure Docker WordPress Multisite Setup</strong></h2>
+<p>Due to the way WordPress works, the initial WordPress installation page is only available through one of the IPv4 Public IP addresses of one of our instances. You may need to cycle through each node IP address to find the correct one.</p>
+<p>Run through the setup according to the prompts on the screen (see below) and hit &ldquo;Install WordPress&rdquo; when you are ready:</p>
+<p><img class="aligncenter wp-image-2231 " src="https://caylent.com/wp-content/uploads/2017/12/WordPress-Setup-Page.png" alt="WordPress Setup Page" width="597" height="626" /></p>
+<p>Success!</p>
+<p>You should now be able to login with the details you&rsquo;ve just created. You now have a fully functional WordPress website.</p>
+<p>We now need to modify the WordPress DNS and alter it to our load balancer DNS. First, go back to Postman and the response body for Step 11 of the Postman API collection and copy the load balancer endpoint URL.</p>
+<p>In the WP-Admin panel, navigate to Settings > General and paste the load balancer DNS address under &ldquo;WordPress Address (URL)&rdquo; and &ldquo;Site Address (URL)&rdquo; i.e., http://<your-ELB-DNS-address-here>.</p>
+<p>If you&rsquo;re running a fully qualified domain and that&rsquo;s what you want WordPress on, then that is what you&rsquo;ll switch out. While setting up though, Caylent recommends starting with the load balancer address until you complete your sites&rsquo; designs and add pages/posts.</p>
+<p>Once complete, click &ldquo;Save Changes&rdquo; which should redirect you to your load balancer DNS address to log in again and open up your WordPress dashboard.</p>
+<h2><strong>10. WordPress Multisite Network Setup</strong></h2>
+<p>On your dashboard, choose Tools > Network Setup&mdash;which will be enabled&mdash;and you need to opt for &ldquo;Sub-directories&rdquo; from the choice available as you&rsquo;re running your site from the load balancer. Just hit &ldquo;Install.&rdquo;</p>
+<p><img class="aligncenter wp-image-2234 " src="https://caylent.com/wp-content/uploads/2017/12/Caylent-WordPress-Multisite-Demo-1.png" alt="Caylent WordPress Multisite Demo " width="978" height="521" /></p>
+<p>All that is left to do now is add the resulting information into your wp-config.php file within our target folder &ldquo;/mnt/{{efs_uuid}}/wordpress/var/www/html&rdquo; and replace the other WordPress rules for &ldquo;.htaccess&rdquo; too within your terminal.</p>
+<p>Log back into WordPress, and creating new sites is as simple as clicking My Sites > Dashboard > Create a New Site followed by &ldquo;Site Title,&rdquo; &ldquo;Admin Email,&rdquo; and &ldquo;Add Site.&rdquo;</p>
+<p>You can do this as many times as you like to add additional sites within WordPress.</p>
+<p>Want to make this process even simpler? Check out Postman&rsquo;s Collection Runner, and run this whole setup in just a few clicks.</p>
+<p>Watch the full YouTube tutorial for this process here:</p>
+<p style="text-align: center;"><iframe src="https://www.youtube.com/embed/aIJ_U_w2ldE" width="480" height="270" frameborder="0" allowfullscreen="allowfullscreen"></iframe></p>
+<p>Keep an eye out for our next Caylent API Tutorial&mdash;coming soon!</p>

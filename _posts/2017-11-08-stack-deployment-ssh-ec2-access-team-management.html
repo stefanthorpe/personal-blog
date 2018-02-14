@@ -1,0 +1,103 @@
+---
+layout: post
+status: publish
+published: true
+title: Stack Deployment with SSH EC2 Access & Team Management
+author:
+  display_name: Stefan Thorpe
+  login: stefan
+  email: stefan@caylent.com
+  url: ''
+author_login: stefan
+author_email: stefan@caylent.com
+wordpress_id: 2130
+wordpress_url: http://caylent.com/?p=2130
+date: '2017-11-08 11:00:40 +0200'
+date_gmt: '2017-11-08 19:00:40 +0200'
+categories:
+- API
+- API Tutorials
+tags:
+- API
+- AWS
+- Postman
+- Caylent API Tutorial
+- SSH Access
+- SSH EC2
+- GitHub
+- Stack deployment
+- Team management
+comments: []
+---
+<p><span style="font-weight: 400;">In the second of our Caylent API Tutorials, we discuss how you can set up and auto-add SSH users to your stacks and infrastructure using Caylent. This tutorial covers the 5 necessary steps for optimizing team management using Postman and is supported by a <a href="https://youtu.be/ARj4a2k0ZxY" target="_blank" rel="noopener">video tutorial on YouTube</a> (also see below). You can create teams, invite users and configure the user settings to include a user. It is also possible to define if they are admin or just have basic SSH access minus the sudo commands.</span></p>
+<h3><strong>Requirements</strong></h3>
+<p><span style="font-weight: 400;">For this tutorial, you&rsquo;re going to need:</span></p>
+<ul>
+<li style="font-weight: 400;">An active Caylent account with AWS cloud credentials associated. To sign up to Caylent, click <a href="https://app.caylent.com/signup" target="_blank" rel="noopener">here</a>. For details on adding AWS credentials, click <a href="https://help.caylent.com/hc/en-us/articles/115009267588-Connect-Amazon-Web-Services" target="_blank" rel="noopener">here</a>.</li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">A configured Postman account. If you haven't already set Postman up, then check out <a href="http://caylent.com/caylents-easy-rest-api-postman-5-steps" target="_blank" rel="noopener">my first tutorial</a>.</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">A GitHub account and a published public SSH key. Follow the GitHub guide <a href="https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/" target="_blank" rel="noopener">here</a>&nbsp;to complete this process.</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Access to your AWS account to change firewall rules.</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Caylent API Docs: </span>
+<ul>
+<li style="font-weight: 400;"><a href="https://docs.caylent.com/#af2dcd51-a13c-9ccc-c306-abb6ebaa3e84" target="_blank" rel="noopener"><span style="font-weight: 400;">Create a Team and Invite a User</span></a></li>
+<li style="font-weight: 400;"><a href="https://docs.caylent.com/#aeeed8cc-477a-9ecd-cb26-0588efe6742b" target="_blank" rel="noopener">Auto Create SSH Login for a Team Member</a></li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h2><strong>Step 1: Setup User Account</strong></h2>
+<p>So, let's jump in. With the Caylent API collection downloaded, login to Postman. Our first task is to set up your actual user account under account settings (See image (i)).</p>
+<p><img class="aligncenter wp-image-2131 size-large" src="https://caylent.com/wp-content/uploads/2017/11/githubusername2-e1509953519415-1024x380.png" alt="github_username" width="1024" height="380" /></p>
+<p><span style="font-weight: 400;">The two details we concerned with here are the github_username and the ssh_username (See image (ii)). </span></p>
+<p><span style="font-weight: 400;">Inputting the ssh_username is optional. If specified, this becomes the default ssh_username. If this username clashes with another on the stack, our system uses the github_username instead.</span><span style="font-weight: 400;"><br />
+</span><span style="font-weight: 400;">On top of providing a backup username, github_username simply queries your GitHub account for any published public keys associated with it. These keys are used to authorize each individual.</span></p>
+<p><span style="font-weight: 400;">Note: You can use the &ldquo;GET User Details&rdquo; function here to pull and check this information quickly if you&rsquo;re already on the system. Click &ldquo;GET User Details&rdquo; and </span><span style="font-weight: 400;">Send</span><span style="font-weight: 400;"> to perform this command. The &ldquo;PATCH&rdquo; command will allow you to update this info if necessary.</span></p>
+<p><span style="font-weight: 400;">Within GitHub account settings, you can access and query your public key. It is then a straightforward process to add those to the authorized login key.</span></p>
+<p>&nbsp;</p>
+<h2><strong>Step 2: Create a Stack</strong></h2>
+<p><span style="font-weight: 400;">Our next step is to utilize the <a href="https://docs.caylent.com/#64c7a0e4-19fd-b446-a3d9-eb690d75bc00" target="_blank" rel="noopener">API </a>How To Guides to create a stack. To do this, follow the steps for the &ldquo;Caylent API - Env&rdquo; collection. </span></p>
+<p><img class="aligncenter wp-image-2132 size-full" src="https://caylent.com/wp-content/uploads/2017/11/Caylent-API-Env-2.png" alt="Caylent API - Env 2" width="600" height="300" /></p>
+<p><span style="font-weight: 400;">Choose the &ldquo;Stacks&rdquo; folder and &ldquo;POST Create Docker Stack&rdquo; to launch a default Caylent stack. The default stack created will be called &ldquo;docker-today-1&rdquo; within the &ldquo;us-east-1&rdquo; region. At this point, if you click &ldquo;GET 3. List Stack SSH Users&rdquo; and </span><span style="font-weight: 400;">Send</span><span style="font-weight: 400;">, you should see your own details listed including the ssh_username and GitHub keys.</span></p>
+<p><span style="font-weight: 400;">As the stack creator, you will automatically add users with full admin rights. </span></p>
+<p>&nbsp;</p>
+<h2><strong>Step 3: Team Management: How to Add a Team Member</strong></h2>
+<p><span style="font-weight: 400;">For this action, move to the <a href="https://docs.caylent.com/#af2dcd51-a13c-9ccc-c306-abb6ebaa3e84" target="_blank" rel="noopener">API </a>How To Guide &ldquo;Create a Team and Invite a User.&rdquo;</span></p>
+<p><span style="font-weight: 400;">Click &ldquo;POST 2. Create Team&rdquo; and enter your team&rsquo;s identification in the ("name":) command before clicking </span><span style="font-weight: 400;">Send</span><span style="font-weight: 400;">. </span></p>
+<p><span style="font-weight: 400;">Use the &ldquo;POST 3. Invite User&rdquo; function to send a team invitation to a new user&rsquo;s email address. Once users accept the invitation, they can be added as an SSH EC2 user.</span></p>
+<p>&nbsp;</p>
+<h2><strong>Step 4: Adding SSH Users to Stack</strong></h2>
+<p><i><span style="font-weight: 400;">Note: Users who have yet to accept a &ldquo;pending_invite&rdquo; cannot yet be added as SSH users. Full team members who are already available can though.</span></i></p>
+<p><span style="font-weight: 400;">Click &ldquo;POST 4: Add SSH Users to Stack&rdquo; and enter in the team member&rsquo;s email. To grant admin access set ("admin": true)&mdash;change to ("admin": false) to revoke admin settings.</span></p>
+<p>&nbsp;</p>
+<h2><strong>Step 5: Launch Stack</strong></h2>
+<p><span style="font-weight: 400;">With the team now setup and team members invited/created, it is now possible to launch your first stack. </span></p>
+<p><span style="font-weight: 400;">Move back to &ldquo;Caylent-API Env&rdquo; documentation for this part of the tutorial.</span></p>
+<p><span style="font-weight: 400;">Click &ldquo;POST Launch Stack&rdquo; command and click </span><span style="font-weight: 400;">Send</span><span style="font-weight: 400;">. </span></p>
+<p><span style="font-weight: 400;">Allow five to ten minutes for the stack to finish deploying.</span></p>
+<p><span style="font-weight: 400;">Your Caylent account dashboard will now display your fully deployed stack. From there move to the Resources tab for more information on the full list of &ldquo;Resources Linked to this Stack&rdquo;&mdash;including the IP addresses and DNS for your Load Balancers.</span></p>
+<p><span style="font-weight: 400;">The Stack Properties tab will also give you a list of users who now have SSH EC2 access granted to the deployed stack.</span></p>
+<p>&nbsp;</p>
+<h2><strong>Step 6: SSH EC2 Access: Your&nbsp;</strong><strong>AWS Account</strong></h2>
+<p><span style="font-weight: 400;">Let's jump over to AWS and see what the stack looks like there. Firstly, from within the CloudFormation section, we can see:</span></p>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Network: This is a collection of all of your VPCs and subnets that stacks use</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Stack: The CloudFormation template for stack resources</span></li>
+</ul>
+<p><span style="font-weight: 400;">Click on the Stack template to see detailed information on all the resources (i.e. EC2 instances, load balancers, security groups, etc.) that actually make up your stack.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">Moving to EC2.</span></p>
+<p><span style="font-weight: 400;">Caylent&rsquo;s default stack composition consists of a 5-instance cluster. Within that cluster, there are 3 master nodes and 2 workers. </span></p>
+<p><span style="font-weight: 400;">Within EC2, click &ldquo;Running Instances.&rdquo; This will display all the information on our cluster. Scroll to the right-hand side to see the two different types of &lsquo;Security Groups&rsquo; that your worker and manager nodes fall into. Click on an instance to see a more in-depth view of the two Security Group breakdowns of</span><i><span style="font-weight: 400;"> swarm-workers-group</span></i><span style="font-weight: 400;">, </span><i><span style="font-weight: 400;">swarm-master-group</span></i><span style="font-weight: 400;"> as well as the </span><i><span style="font-weight: 400;">EFS Security group</span></i><span style="font-weight: 400;">.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">For SSH access, click </span><i><span style="font-weight: 400;">swarm-master-group, </span></i><span style="font-weight: 400;">followed by the &ldquo;Inbound&rdquo; tab and &ldquo;Edit.&rdquo; </span></p>
+<p><span style="font-weight: 400;">Now &ldquo;Add Rule,&rdquo; choose &ldquo;SSH&rdquo; from the drop-down box and change &ldquo;Custom&rdquo; to &ldquo;My IP&rdquo; before clicking &ldquo;Save&rdquo; to complete the process.</span></p>
+<p><span style="font-weight: 400;">Complete the same steps in </span><i><span style="font-weight: 400;">swarm-workers-group.</span></i></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">You now have full SSH Ec2 access for all of your servers using your private key and the ssh_username specified earlier. </span></p>
+<p>&nbsp;</p>
+<p><strong>Here&rsquo;s the full video tutorial to guide you through SSH EC2 access and Team Management screen by screen:</strong></p>
+<p>&nbsp;</p>
+<p>[embed]http://youtu.be/ARj4a2k0ZxY[/embed]</p>
+<p>Watch the next Caylent API YouTube Tutorial now: <a href="https://youtu.be/o07ytPajjrU" target="_blank" rel="noopener">Deploy a High Availability Wordpress using Docker</a></p>
+<p>&nbsp;</p>
+<p>Read the next&nbsp;Caylent API Blog Tutorial here:&nbsp;<a href="https://caylent.com/aws-high-availability-docker-wordpress-stack/">Setup an AWS High Availability Docker WordPress Stack</a></p>

@@ -1,0 +1,93 @@
+---
+layout: post
+status: publish
+published: true
+title: Setup an AWS High Availability Docker WordPress Stack
+author:
+  display_name: Stefan Thorpe
+  login: stefan
+  email: stefan@caylent.com
+  url: ''
+author_login: stefan
+author_email: stefan@caylent.com
+wordpress_id: 2207
+wordpress_url: http://caylent.com/?p=2207
+date: '2017-12-01 06:00:02 +0200'
+date_gmt: '2017-12-01 14:00:02 +0200'
+categories:
+- API
+- API Tutorials
+tags:
+- API
+- AWS
+- Docker
+- High-availability
+- wordpress
+- Caylent API Tutorial
+- Docker WordPress
+comments: []
+---
+<p>Our third Caylent API Tutorial examines how you can setup and deploy a highly available Docker WordPress stack leveraging our convenient Postman API documents. This tutorial covers the necessary steps to quickly&mdash;and easily&mdash;launch a stack on Caylent to host an AWS high availability WordPress site with Docker. As ever, we support each of our tutorials with a YouTube video to take you through the whole process screen-by-screen.</p>
+<h3><strong>Requirements</strong></h3>
+<p>For this tutorial, you&rsquo;re going to need:</p>
+<ul>
+<li>A Caylent account. <a href="https://app.caylent.com/signup" target="_blank" rel="noopener">Sign up here</a> to get one.</li>
+<li>A configured Postman account. If you haven't already set Postman up, then check out my <a href="http://caylent.com/caylents-easy-rest-api-postman-5-steps" target="_blank" rel="noopener">first tutorial here</a>.</li>
+<li>A GitHub account with a published public SSH key. Follow the <a href="https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/" target="_blank" rel="noopener">GitHub guide here</a>.</li>
+<li>Caylent API Docs: <a href="https://docs.caylent.com/#d7e154ce-f28c-7b86-803a-a1119922346d" target="_blank" rel="noopener">Deploy a High Availability Docker WordPress Stack</a></li>
+<li><a href="https://github.com/caylent/caylent-postman-templates/blob/master/collections/Create_Highly_Available_Wordpress_Cluster_Using_Docker_Swarm.postman_collection.json" target="_blank" rel="noopener">Caylent GitHub Postman Collections</a>. (Note. While we leverage the API collection in this tutorial, it is possible to achieve exactly the same outcome with these GitHub templates.)</li>
+<li>Access to your AWS account to change firewall rules.</li>
+</ul>
+<p>The entire process should take less than five to 10 minutes.</p>
+<p>Download the Caylent API collection, login to your Postman account, select the Caylent API environment variables, and we are ready to roll.</p>
+<p>You can automate the entire process for each of our Caylent API collections in Postman using the &lsquo;Collection Runner&rsquo;. See the image below for an example:</p>
+<p><img class="aligncenter wp-image-2215 " src="https://caylent.com/wp-content/uploads/2017/12/Postman-Collection-Runner-Image.png" alt="Postman Collection Runner Image" width="467" height="727" /></p>
+<p>Note: The API collection automatically saves all properties within &ldquo;{{...}}&rdquo; as an environment variable (e.g., the {{mountUuid}} in this step). When we attach the &ldquo;mount_uuid&rdquo; later, we simply need to specify the saved response variable {{mountUuid}}.</p>
+<p>If you are doing the process manually, save this property somewhere safe.</p>
+<h2><strong>Create a Caylent Docker WordPress Stack</strong></h2>
+<p>Under the API How To Guides in Postman, click &ldquo;POST 2. Create Docker Stack.&rdquo; This automatically creates a default Caylent stack made up of five instances, which includes three master servers and two workers comprising a Docker swarm cluster.</p>
+<p>By default, Docker Swarm workers are placed in an auto-scale group that can scale up to a maximum of ten.</p>
+<p>Within Postman, default properties are set for each property but you can change any of the variables (i.e., stack name, timestamp, etc.). Now, hit &ldquo;Send.&rdquo;</p>
+<p>The results will show that the stack status is still currently &rdquo;un-deployed&rdquo; because it&rsquo;s not yet launched and you are going to add other services to it first.</p>
+<h2><strong>Attach a MYSQL Relational Database Service</strong></h2>
+<p>The Caylent API Docs make it easy to attach and scale a relational database to your Docker WordPress stack. Simply click &ldquo;POST 3. Create Database.&rdquo; Postman will remember the {{stackuuid}} from the previous step or you can specify that manually based on the response body from Step 2.</p>
+<p>Caylent auto-fills default specifications, but these can easily be modified according to your needs. You can specify parameters for disk size, disk type, as well as any other RDS settings that can be altered within CloudFormation. Hit &ldquo;Send.&rdquo;</p>
+<p>This will attach the MYSQL RDS to the stack and display the details in the response body.</p>
+<h2><strong>Create Elastic File System</strong></h2>
+<p>The command &ldquo;POST 4. Create EFS&rdquo; leverages AWS's Elastic File System (EFS) to create the necessary simple, scalable file storage which WordPress requires. This simple request notifies the Caylent system to attach the EFS to all nodes. The command also mounts the file system, allowing WordPress to access every file across all servers and containers.</p>
+<p>Again, specify the required stack and hit &ldquo;Send.&rdquo;</p>
+<p>The next step is to launch our stack, using the &ldquo;Launch&rdquo; command. This may take a few seconds to complete&mdash;until it does, it will remain in a &ldquo;waiting&rdquo; state.</p>
+<h2><strong>Create Mount</strong></h2>
+<p>While you are waiting for the stack launch to complete, you can configure and setup your actual WordPress application according to your needs.</p>
+<p>This will first involve creating a bind mount to our shared folder by clicking &ldquo;POST 6. Create Mount,&rdquo; then specifying the source as our dynamic {{efs}} variable for the EFS file system and that we want to create a WordPress folder.</p>
+<p>Our mount target is &ldquo;var/www/html&rdquo; and the default &ldquo;source&rdquo; is &ldquo;{{efs}}/wordpress.&rdquo; This mounts our container volume to our EFS volume on each host in the cluster. When the container is initially created it will store all persistent data (i.e., wp_content) inside the shared file system. We will attach this mount to our app later.</p>
+<p>Now, hit &ldquo;Send&rdquo; again.</p>
+<h2><strong>Configure Your AWS High Availability WordPress Application</strong></h2>
+<p>Creating the actual WordPress container service is easy; just use the request &ldquo;POST 7. Create WordPress.&rdquo; By default, our WordPress Postman collection creates a service called &ldquo;wordpress&rdquo; appended with the current &ldquo;timestamp&rdquo;&mdash;though you can name the service anything.</p>
+<p>We&rsquo;re going to use the latest official WordPress image and indicate that it should be attached to the current stack&mdash;which is probably still deploying in the background. At this point, you can specify the &ldquo;number_containers&rdquo; the service needs to run. We want five; one per server, but you can choose any number you want according to your requirements and load.</p>
+<p>Open up &ldquo;ports&rdquo; : [ 80:80 ] on the actual service to map through to your load balancers.</p>
+<p>For the WordPress image, we need to specify the following database variables.</p>
+<p><img class="aligncenter wp-image-2209 size-full" src="https://caylent.com/wp-content/uploads/2017/11/Wordpress-image.png" alt="Postman WordPress Application Configuration" width="994" height="320" /></p>
+<p>We can again use our dynamic variables to pull in the necessary secrets such as the &ldquo;database.host,&rdquo; &ldquo;database.name,&rdquo; and other required environment variables which were produced at the time of creating the RDS database.</p>
+<p>If everything looks good, hit &ldquo;Send.&rdquo;</p>
+<h2><strong>Attach Mount</strong></h2>
+<p>Our next request &ldquo;POST 8. Add Mount to App,&rdquo; does exactly what it suggests and attaches the previously created bind mount to our WordPress application. It&rsquo;s as simple as click, specify the saved variable "mount_uuid": "{{mountUuid}}," and hit &ldquo;Send.&rdquo;</p>
+<p>Everything is now setup within Caylent&rsquo;s system, and we&rsquo;re ready to rock and roll.</p>
+<p>It&rsquo;s now just a case of waiting for your Docker WordPress stack to be deployed, (&ldquo;GET 9. WordPress Stack - Loop Until Deployed Copy&rdquo;). Once this state registers as &ldquo;deployed,&rdquo; you can continue with the following steps.</p>
+<h2><strong>Deploy Application</strong></h2>
+<p>Within the command &rdquo;POST 10. Deploy WordPress App to Stack,&rdquo; specify the necessary "{{stackUuid}}" to deploy the app to your required stack and hit &ldquo;Send.&rdquo;</p>
+<p>Once deployed, you&rsquo;ll see a display of all the results including &ldquo;comments,&rdquo; &ldquo;time,&rdquo; and the &ldquo;app version.&rdquo;</p>
+<p>Finally, we&rsquo;ll use the last request in the collection to &ldquo;POST 11. List All Nodes - Filter Stack.&rdquo; This will display all our node endpoints including the server IPs and load balancer address.</p>
+<p>You&rsquo;ll now have to check each server IP address within your chosen web browser to work out the one instance that the Wordpress installation page is on. This is due to a quirk with how WordPress installation works in a high availability configuration. Simply rotate through each server IP until you find the WordPress installation console.</p>
+<p>Note: It may take a minute or two for the config to deploy because it&rsquo;s a reasonably large installation.</p>
+<h2><strong>WordPress Site Setup</strong></h2>
+<p><img class="aligncenter wp-image-2231 size-full" src="https://caylent.com/wp-content/uploads/2017/12/WordPress-Setup-Page.png" alt="WordPress Setup Page" width="610" height="640" /></p>
+<p>Once you&rsquo;ve followed the steps involved in the &ldquo;famous five-minute WordPress installation process,&rdquo; the final step of our tutorial is to edit the Wordpress Address and Site Address URL in &ldquo;General Settings.&rdquo; Change the load balancer DNS address i.e., http://<your-ELB-DNS-address-here>. This can be found under &ldquo;endpoints&rdquo; in Step 11 of the Postman API template.</p>
+<p>Hit &ldquo;Save Changes,&rdquo; once that the URLs are changed. After a minute or two, the load balancer will become &ldquo;InService.&rdquo;</p>
+<p>Enter your account details, login to WordPress, and you&rsquo;re good to go!</p>
+<p>&nbsp;</p>
+<h3>Here&rsquo;s the YouTube video to watch the entire tutorial:</h3>
+<p style="text-align: center;"><iframe src="https://www.youtube.com/embed/o07ytPajjrU" width="560" height="315" frameborder="0" allowfullscreen="allowfullscreen"></iframe></p>
+<p>&nbsp;</p>
+<p>Watch the newest Caylent API YouTube Tutorial now:&nbsp;<a id="creator-editor-title-link" dir="ltr" title="Deploy Multisite Wordpress on Docker via Caylent API - Caylent Tutorial" href="https://youtu.be/aIJ_U_w2ldE" target="_blank" rel="noopener">Deploy Multisite Wordpress on Docker via Caylent API </a></p>
+<p>Coming soon in our Caylent API Blog Tutorials: <a href="https://caylent.com/api-wordpress-multisite-using-docker/" target="_blank" rel="noopener">10 Steps to Deploy WordPress Multisite Using Docker</a></p>
