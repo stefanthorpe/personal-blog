@@ -1,0 +1,116 @@
+---
+layout: post
+status: publish
+published: true
+title: Creating a High-Availability Docker Swarm on AWS
+author:
+  display_name: JP La Torre
+  login: caylent
+  email: jp@caylent.com
+  url: ''
+author_login: caylent
+author_email: jp@caylent.com
+wordpress_id: 1855
+wordpress_url: https://caylent.com/?p=1855
+date: '2017-07-25 09:55:39 +0300'
+date_gmt: '2017-07-25 16:55:39 +0300'
+categories:
+- AWS
+- Docker
+tags:
+- AWS
+- Docker
+- Guides
+- High-availability
+comments: []
+---
+<h3>Summary</h3>
+<p>In six steps, you&rsquo;ll have a cluster up and running:</p>
+<ul>
+<li>Install Docker</li>
+<li>Assign 3 managers for the Docker Swarm</li>
+<li>Add two nodes or &lsquo;workers&rsquo; to the Swarm</li>
+<li>Discover how to view your Swarm status</li>
+<li>Run a test service across all machines</li>
+</ul>
+<p>Anybody that is already familiar with Docker knows the limitations of running standalone containers in production. Containers are ephemeral and without proper scheduling and orchestration they may fail or stop running. Docker Swarm solves many of these challenges by introducing powerful container orchestration that allows services to be scheduled across multiple hosts. Services can be scheduled across multiple hosts in the Swarm and each service may run multiple containers, ensuring maximum reliability and performance.</p>
+<h3>Prerequisites</h3>
+<p>For the sake of this article, you&rsquo;ll need to have a few things already in place:</p>
+<ul>
+<li>A network of connected machines (i.e. VPC)</li>
+<li>At least 2 public subnets</li>
+<li>5 EC2 instances on AWS with an elastic load balancer (ELB</li>
+</ul>
+<p>Set these ingress rules on your EC2 security groups:</p>
+<ul>
+<li>HTTP port 80 from 0.0.0.0\0</li>
+<li>SSH from 0.0.0.0\0 (for increased security replace this with your own IP)</li>
+</ul>
+<p>Now that you&rsquo;ve got your machines configured properly, let&rsquo;s get started. We&rsquo;re using Ubuntu 14.04 LTS, though the process will work pretty much the same on most Linux-based operating systems.</p>
+<h2>Step 1: Installing Docker</h2>
+<p>The installation process is well documented elsewhere and you can read <a href="https://docs.docker.com/engine/installation/">Docker&rsquo;s documentation</a> if you&rsquo;d like the play by play. The simplest method is to run the following commands on each machine:</p>
+<pre><code>sudo apt-get update
+sudo apt-get install curl -y
+curl -sSL https://get.docker.com/ | sh</code></pre>
+<p>This will install the latest version of Docker engine.</p>
+<h2>Step 2: Assign First Manager Machine</h2>
+<p>To begin, all nodes must be able to access your swarm manager machine. To get the internal IP address of your machines you can look for the Private IP as listed on the EC2 dashboard or issue this command from your SSH console (EC2 metadata docs <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html">here</a>):</p>
+<p><code>curl http://169.254.169.254/latest/meta-data/local-hostname</code></p>
+<p>This will respond with something like this:&nbsp;<code>ip-10-0-2-194.ec2.internal</code></p>
+<p>Next, use the following command to assign your first host machine as manager:</p>
+<p>(<em><strong>Note:</strong></em> replace everything&nbsp;bracketed <> with your own info)</p>
+<p><code>docker swarm init --advertise-addr <manager_ip></code></p>
+<p>Once issued and completed, the following output should appear on your screen:</p>
+<p><code>Swarm initialized: current node (uyz40wx3xg0fmr4i472lhn0vt) is now a manager.</code></p>
+<p>To add a worker to this swarm, run the following command:</p>
+<pre><code>docker swarm join \
+--token SWMTKN-1-3jmkpf9b48bvzv9eyrxghw44l44fdqca1dgfbsjky1qz8cqvkp-2ab4shwgwv5gepyuz2wcns47n \
+10.0.2.194:2377</code></pre>
+<p>You can see that we&rsquo;ve already been given the command to add a worker to the cluster, but we&rsquo;ll save that for step 4.</p>
+<p>As a quick review, you can issue the following commands at any time to get the tokens necessary for adding workers and managers.</p>
+<p>To get manager token:</p>
+<p><code>docker swarm join-token manager</code></p>
+<p>To get worker token:</p>
+<p><code>docker swarm join-token worker</code></p>
+<h2>Step 3: Add Manager Nodes</h2>
+<p>At this point, it is important to set up two more managers to improve your Swarm&rsquo;s fault-tolerance. Always create clusters with an odd number of managers in your Swarm, as a &lsquo;majority&rsquo; vote is needed between managers to agree on proposed management tasks. An odd&mdash;rather than even&mdash;number is strongly recommended to have a tie-breaking consensus. <em>Having two managers is actually worse than having one.</em></p>
+<p>We&rsquo;re going to setup 3 managers to establish our High Availability setup.</p>
+<p>To&nbsp;get the manager token&nbsp;run&nbsp;<code>docker swarm join-token manager</code>.</p>
+<p>To add your two additional manager nodes, issue this command from the nodes you wish to assign as managers:</p>
+<p><code>docker swarm join --token <manager_token> <manager_ip>:2377</code></p>
+<p>Example:</p>
+<pre><code>docker swarm join \
+--token SWMTKN-1-3jmkpf9b48bvzv9eyrxghw44l44fdqca1dgfbsjky1qz8cqvkp-5ti6s2ofrfa6rhijpla0ngtok \
+10.0.2.194:2377</code></pre>
+<p>You&rsquo;ll see a message like this:</p>
+<p><code>This node joined a swarm as a manager.</code></p>
+<h2>Step 4: Add Worker Nodes</h2>
+<p>Now that you have your manager nodes assigned, you&rsquo;re ready to add some workers to the Swarm. From each of the nodes that you want to connect, run this command:</p>
+<p><code>docker swarm join --token <worker_token> <manager_ip>:2377</code></p>
+<p>Repeat this action to add as many worker nodes as you want to the cluster.</p>
+<h2>Step 5: View Swarm Status</h2>
+<p>Let&rsquo;s take a look at all that you have created in your first cluster. Run command <code>docker node ls</code> from a manager machine to view your Swarm&rsquo;s connected nodes.</p>
+<p>You can see we now have 3 managers and 2 workers.</p>
+<p><img class="alignleft wp-image-1876" src="https://caylent.com/wp-content/uploads/2017/07/docker-node-ls.png" alt="" width="799" height="164" /></p>
+<h2>Step 6: Create a Service</h2>
+<p>With our Swarm is up and running, let&rsquo;s get a service deployed to see how the scheduling works. To start a service on the Swarm go back to any manager machine.</p>
+<p>Let&rsquo;s start an nginx service, called webserver, with the command:</p>
+<p><code>docker service create -p 80:80 --name webserver nginx</code></p>
+<p>Docker will now pull&nbsp;the latest nginx image and start one container.</p>
+<p>We can see our service by issuing a docker service ls command, which will return something like this:</p>
+<pre><code>jp@ip-10-0-2-194:~$ docker service ls
+ID            NAME       MODE        REPLICAS  IMAGE
+nogqyhc73mfa  webserver  replicated  1/1       nginx:latest</code></pre>
+<p>This will deploy the nginx service on one machine, but since Swarm is all about running containers on multiple nodes let&rsquo;s scale it up!</p>
+<p><code>docker service scale webserver=10</code></p>
+<p>Next, issue the command <code>docker service ps webserver</code> and you will see the instances of the service running.</p>
+<p><img class="alignleft wp-image-1875" src="https://caylent.com/wp-content/uploads/2017/07/docker-service-ps-webserver.png" alt="" width="802" height="201" /></p>
+<p>Since this service was published on port 80, you can fire up a web browser and point it to any public IP on the cluster and check out the nginx default page.</p>
+<p><img class="alignleft wp-image-1874 size-full" src="https://caylent.com/wp-content/uploads/2017/07/welcome-to-nginx.png" alt="" width="1040" height="430" /></p>
+<h2>Optional: Removing the Service</h2>
+<p>Tearing down the nginx service you just deployed is extremely easy.</p>
+<p><code>docker service rm webserver</code></p>
+<h2>Conclusion</h2>
+<p>In this article, we demonstrated how to create a high-availability Docker Swarm with 3 managers and 2 workers and deployed your first service.</p>
+<p>We&rsquo;d like to invite you to check out Caylent, a SaaS platform for deploying containers inside your own cloud. Docker Swarm is automatically built for you each time you launch a stack using Caylent.</p>
+<p>Using Caylent, you can select 1, 3, or 5 host managers on your own Swarm cluster. Managers and workers are split into their own auto-scaling group (ASG) to allow for independent scaling and better network isolation. We also have lots of great features like continuous delivery, databases, SSH access, and more. Take the next step in <a href="http://caylent.com/ha-wordpress-cluster-docker-swarm-efs/" target="_blank" rel="noopener">Creating a High-Availability WordPress Cluster with Docker Swarm and EFS</a>.</p>

@@ -1,0 +1,126 @@
+---
+layout: post
+status: publish
+published: true
+title: Docker & Continuous Delivery Deployment Types
+author:
+  display_name: Stefan Thorpe
+  login: stefan
+  email: stefan@caylent.com
+  url: ''
+author_login: stefan
+author_email: stefan@caylent.com
+wordpress_id: 1969
+wordpress_url: https://caylent.com/?p=1969
+date: '2017-11-06 08:00:46 +0200'
+date_gmt: '2017-11-06 16:00:46 +0200'
+categories:
+- Docker
+- Continuous Delivery
+- Containers
+tags:
+- Docker
+- Continuous Delivery
+- Minimum In-Service Deployments
+- Rolling Deployments
+- Blue/Green Deployments
+- A/B Testing
+comments:
+- id: 26
+  author: Docker and Continuous Delivery Deployment Types &#8211; Full-Stack Feed
+  author_email: ''
+  author_url: https://fullstackfeed.com/docker-and-continuous-delivery-deployment-types/
+  date: '2017-11-06 14:47:55 +0200'
+  date_gmt: '2017-11-06 22:47:55 +0200'
+  content: "[&#8230;] We examine the four major deployment methods to help your team
+    achieve Continuous Delivery with Docker outlining each of their advantages and
+    disadvantages&#8230; Read more [&#8230;]"
+---
+<p>In our last blog post&mdash;<a href="http://caylent.com/a-5-step-guide-to-good-continuous-delivery" target="_blank" rel="noopener">A 5-Step Guide to Good Continuous Delivery</a>&mdash;we began looking at the best practices high-performing IT teams should be employing to achieve Continuous Delivery (CD) with Docker. CD is achievable using numerous deployment methods and Docker is just one tool to help realize the necessary customizable &ldquo;workflow-based&rdquo; integration/build process.</p>
+<h2><strong>Continuous Delivery Deployment Type</strong><strong>s</strong></h2>
+<p>This week, we&rsquo;re going to examine the four major deployment types and outline each of their advantages and disadvantages. These are:</p>
+<ul>
+<li>Minimum In-Service deployment</li>
+<li>Rolling application updates</li>
+<li>Blue/Green deployment</li>
+<li>A/B testing</li>
+</ul>
+<p>These four deployment types fall into two sub-categories: application and infrastructure deployment.</p>
+<h3><strong>Minimum In-Service Deployments</strong></h3>
+<p>With this method, we specify the minimum number of instances in our applications that stay in-service while updating the remaining percentage&mdash;therefore, deploying to as large a number of targets as possible. This process is repeated until all servers have been updated with the new release.</p>
+<p><strong>Example:</strong> If we have 5 containers each running our current application A, then we set our policy to keep a minimum in-service number of 2. We take 3 servers offline to update them to our new version B. Once these are completed and back online, we can update the remaining 2.</p>
+<p><img class="aligncenter wp-image-2091" src="http://caylent.com/wp-content/uploads/2017/10/min-in-service-300x62.png" alt="Continuous Delivery Deployment Types: Minimum In-Service Deployments" width="885" height="183" /></p>
+<h4><em>Disadvantages</em></h4>
+<ul>
+<li>The process happens in multiple stages, so support is necessary in the form of orchestration and health checks outside of Swarm</li>
+<li>Does not work well for infrastructure changes</li>
+<li>Changes are being run on live servers&mdash;recovery time may be necessary if one fails</li>
+</ul>
+<h4><em>Advantages</em></h4>
+<ul>
+<li>There are few moving parts, which means increased testing capability; make application and code changes within the process</li>
+<li>No downtime and no additional infrastructure cost</li>
+<li>The process is often quicker than a rolling deployment (see below)</li>
+</ul>
+<h3><strong>Rolling Deployments</strong></h3>
+<p>Consider rolling deployments as an extension of minimum in-service. However, rather than define the number of containers that should remain online, we specify the maximum number of containers to update in tandem.</p>
+<p><strong>Example:</strong> We have the same 5 containers as before, but this time we initialize rolling updates by specifying the number of containers that may be updated simultaneously, e.g. 2. The process moves updates through 2 containers at a time until all the servers in the series are updated.<br />
+Note: Docker Swarm supports rolling updates out the box; the default is to update one container at a time. To modify this use the <em>--update-parallelism setting</em></p>
+<p><img class="aligncenter wp-image-2092" src="http://caylent.com/wp-content/uploads/2017/10/Rolling-Deployments-300x51.png" alt="Continuous Delivery Deployment Types: Rolling Deployments" width="882" height="150" /></p>
+<h4><em>Disadvantages</em></h4>
+<ul>
+<li>Docker rolling updates deal with failure in two ways:
+<ul>
+<li>By pausing, allowing someone to jump in and rollback to fix</li>
+<li>Or continuing regardless, meaning you may not discover a problem while the container is running</li>
+</ul>
+</li>
+<li>More complex than minimum in-service</li>
+<li>Can be the least efficient in terms of deployment time; based on the time taken to update per stage</li>
+<li>Again, we recommend orchestration and health checks outside of Swarm</li>
+</ul>
+<h4><em>Advantages</em></h4>
+<ul>
+<li>No downtime</li>
+<li>Pausing is possible, permitting limited multi-version testing</li>
+<li>Allows for automated testing&mdash;to assess deployment targets before continuing</li>
+</ul>
+<h3><strong>Blue/Green Deployments</strong></h3>
+<p>When following the Blue/Green (a.k.a. Red/Black) method, we replicate our &ldquo;entire&rdquo; infrastructure for a short time. The replicated infrastructure hosts the new application, while the old infrastructure continues to run until testing is complete and the new stack is adopted. The capabilities to achieve this have been around for a long time, but before the Cloud, it was an incredibly costly deployment method. Now, we can deploy stacks to a whole new environment&mdash;allowing for isolated evaluation&mdash;and thanks to the Cloud, at minimal costs. Once testing is complete, we switch our application over to the new version and shut down the legacy stack.</p>
+<p><img class="aligncenter wp-image-2093" src="http://caylent.com/wp-content/uploads/2017/10/BlueGreen-Deployment-300x205.png" alt="Continuous Delivery Deployment Types: BlueGreen Deployments" width="796" height="544" /></p>
+<p>As the image depicts, Blue represents your current environment version, while the new variant you want to deploy is Green. Typically, this happens in the form of a DNS change, though you can deploy Blue/Green by modifying Auto Scaling Groups too.</p>
+<h4><em>Disadvantages</em></h4>
+<ul>
+<li>Requires advanced orchestration tooling</li>
+<li>Some risk as the same database is necessary</li>
+<li>Incurs some additional cost, though for a short time only</li>
+<li>Unnatural user traffic will flood your servers&mdash;which is not the point for everything to break</li>
+</ul>
+<h4><em>Advantages</em></h4>
+<ul>
+<li>Reduced risk profile since infrastructure becomes immutable</li>
+<li>Offers near zero-downtime</li>
+<li>The switch is clean and controlled when using a DNS change</li>
+<li>Process is fully automated and provides a larger validation window</li>
+<li>It's possible to test the entire environment&rsquo;s health and performance before the switch</li>
+</ul>
+<h3><strong>A/B Testing</strong></h3>
+<p>A/B deployments are virtually identical to Blue/Green, but in this method, we send a small percentage of traffic to our new green environment. This method is capable of switching environments and changing infrastructure, but in a far more precise way than with Blue/Green deployment.</p>
+<p><img class="aligncenter wp-image-2094" src="http://caylent.com/wp-content/uploads/2017/10/AB-Testing-300x208.png" alt="Continuous Delivery Deployment Types: AB Testing" width="777" height="538" /></p>
+<h4><em>Disadvantages</em></h4>
+<ul>
+<li>In comparison to the aforementioned deployment methods, there are a lot of moving parts</li>
+<li>Much more complex</li>
+<li>Requires full automation of everything</li>
+</ul>
+<h4><em>Advantages</em></h4>
+<p>All the benefits of Blue/Green deployments, plus:</p>
+<ul>
+<li>We can predictably scale capacity and pre-warm production</li>
+<li>Use to test new features and make gradual assessments on performance, stability, and health</li>
+<li>We gain customer validation while mitigating blast impact and widespread errors</li>
+</ul>
+<p>Selecting your method of deployment comes down to what best suits your business and technical needs. If it makes sense for your application and user base, we highly recommend leveraging A/B testing where possible.</p>
+<p>If you&rsquo;re keen to automate this entire process, then we&rsquo;d like to invite you to check out <a href="https://caylent.com" target="_blank" rel="noopener">Caylent</a>, our SaaS platform that makes it easy to deploy apps, such as WordPress, inside your own cloud. Our DevOps Container Management System automates the entire process covered here and a whole lot more.</p>
+<p>Best of all, it is free to begin! Click here to <a href="https://app.caylent.com/signup" target="_blank" rel="noopener">sign up </a>today.</p>
+<p>As always, we welcome your feedback and suggestions for future articles.</p>

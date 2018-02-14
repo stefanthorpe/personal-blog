@@ -1,0 +1,65 @@
+---
+layout: post
+status: publish
+published: true
+title: Migrating From Monoliths to Microservices
+author:
+  display_name: Caylent Team
+  login: caylentTeam
+  email: hello@caylent.com
+  url: ''
+author_login: caylentTeam
+author_email: hello@caylent.com
+wordpress_id: 2323
+wordpress_url: https://caylent.com/?p=2323
+date: '2018-01-04 08:00:10 +0200'
+date_gmt: '2018-01-04 16:00:10 +0200'
+categories:
+- Tools
+- Resources
+- Walkthroughs
+tags:
+- monoliths
+- microservices
+comments: []
+---
+<p>A microservice is a common design pattern that has recently gained a lot of traction in the application development world. Microservices have a lot of benefits and are not without merit, however, they are not always the best option. If you are considering migrating your old monoliths to microservices, you should make sure it&rsquo;s a good fit for your use case before taking the plunge.</p>
+<p>Here's an outline of some of the advantages and disadvantages of microservices.</p>
+<h3>Advantages of Microservices</h3>
+<ul>
+<li>Horizontal scalability</li>
+<li>Resilience to partial failures</li>
+<li>Low downtime</li>
+<li>Rolling updates</li>
+<li>Reduced code coupling</li>
+<li>Features can be partially rolled out as they are completed, instead of all at once</li>
+<li>Dev teams can be divided along service lines</li>
+</ul>
+<h3>Disadvantages of Microservices</h3>
+<ul>
+<li>Increased amount of configuration</li>
+<li>Increased deployment complexity</li>
+<li>Fragmentation in code base</li>
+</ul>
+<h1>How to Successfully Migrate From Monoliths to Microservices</h1>
+<p>Once you have decided to start the migration, it&rsquo;s worth taking some time to reevaluate how your application is designed. Design and implementation using microservices can be drastically different from how things work in a monolith application.<br />
+It&rsquo;s also worth considering whether or not you want to include any other large design changes you&rsquo;ve avoided making so far because they would have been too costly to implement in your monolith, such as changing programming languages or picking a software stack that is better suited to microservices.</p>
+<p>Keep in mind: It may be better to stick with technologies your team already knows well.</p>
+<p>Microservices go hand in hand with containers. Depending on your specific requirements, it would be worth looking into a container orchestration framework that is cloud native. This can take a lot of the hassle out of managing and deploying containers in <a href="https://aws.amazon.com/" target="_blank" rel="noopener">AWS</a> or <a href="https://cloud.google.com/" target="_blank" rel="noopener">Google Cloud</a>. Check out our <a href="https://caylent.com/containers-kubernetes-docker-swarm-amazon-ecs/" target="_blank" rel="noopener">Container Wars</a> blog post which pitches the leading container orchestration tools against each other for more information on the best option.</p>
+<h2>API Gateways Make It Easier</h2>
+<p>Using an API gateway can make the transition to microservices easier. It allows you to control which requests go to the legacy monolith and which ones go to the new microservices. An API gateway will allow you to create a minimum viable product with microservices without having to create every single microservice you need. There are going to be unforeseen problems with any new deployment. Starting small with a single service allows you to fix any issues you have before switching the entire system over.</p>
+<p>API gateway is a design pattern that can be accomplished in a number of ways. Amazon offers a managed product that has a number of features, but there are other options, such as <a href="https://www.nginx.com/" target="_blank" rel="noopener">Nginx</a> or a custom service to route requests. Which option you choose will depend on your specific needs.</p>
+<h2>Start With a Minimum Viable Product</h2>
+<p>Once your design is ready, I recommend you begin by deploying a single service to work alongside the existing monolith. This minimum product will help you work out bugs in the design and the deployment. When working on a brand-new system, there will always be unforeseen issues that pop up.</p>
+<p>Starting with a minimum viable product and getting it working in production will make things a lot easier down the line. Especially when you have to migrate the entire application. Writing and deploying your first microservice will probably take a lot longer than you think. However, the knowledge you gain from deploying that first service will help make migrating the rest of the application much smoother.</p>
+<p>Moving your application piecemeal over to microservices will give you some of the benefits of microservices without having to replace your entire monolith all at once. This will also give your developers and your ops team time to get used to the new way of doing things, which will speed up the DevOps process in the future.</p>
+<h2>Monitoring Your Microservices</h2>
+<p>One of my old managers used to say, &ldquo;A feature isn&rsquo;t complete until it&rsquo;s monitored.&rdquo; This is even more important with microservices because these are distributed systems, and debugging them is more complex than it would be with a monolith. Consider deploying a log aggregator, such as <a href="https://www.splunk.com/" target="_blank" rel="noopener">Splunk</a> or <a href="https://www.elastic.co/" target="_blank" rel="noopener">Elasticsearch</a>, alongside a performance monitoring system, like <a href="https://prometheus.io/" target="_blank" rel="noopener">Prometheus</a>. For an in-depth guide to the best monitoring options available, check out our blog post on <a href="https://caylent.com/container-monitoring-prometheus-vs-sysdig/" target="_blank" rel="noopener">Container Monitoring: Prometheus and Grafana Vs. Sysdig and Sysdig Monitor</a>.</p>
+<p>When (yes, &ldquo;when,&rdquo; not if) things start to go wrong, monitoring tools will be your main resource for figuring out what&rsquo;s happening and why.</p>
+<p>Migrating a monolith to microservices can be challenging, but making deliberate design choices and moving slowly can help the migration go smoothly. The microservice design pattern allows DevOps teams and software engineers to make systems that are resilient to failure and scale to meet an application&rsquo;s demand. Microservices are designed for the cloud, and the battle-hardened tools available today make this game-changing transition even easier.</p>
+<p>Alternatively, get started using Caylent today! The DevOps container management platform that helps software teams manage containers, clouds, and microservices with ease. <a href="https://goo.gl/xW3qYu" target="_blank" rel="noopener">Sign up here.</a></p>
+<hr />
+<h3><img class="wp-image-2308 alignleft" src="https://caylent.com/wp-content/uploads/2017/12/BryanAbsher.jpg" alt="Contributor: Bryan Absher" width="300" height="200" /></h3>
+<h3><strong>Writer:&nbsp;<em>Bryan Absher</em></strong></h3>
+<p>Bryan Absher is a Software Engineer who is passionate about new and old technology. He is currently working on large scale distributed applications and single page web apps in the Pacific Northwest.</p>
+<p>Fun fact: Bryan has a cat and will dance your pants off.</p>

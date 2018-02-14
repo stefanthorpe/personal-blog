@@ -1,0 +1,64 @@
+---
+layout: post
+status: publish
+published: true
+title: Caylent&rsquo;s Easy REST API with Postman in 5 Steps
+author:
+  display_name: Stefan Thorpe
+  login: stefan
+  email: stefan@caylent.com
+  url: ''
+author_login: stefan
+author_email: stefan@caylent.com
+wordpress_id: 2122
+wordpress_url: http://caylent.com/?p=2122
+date: '2017-11-03 06:00:13 +0200'
+date_gmt: '2017-11-03 13:00:13 +0200'
+categories:
+- API
+- API Tutorials
+tags:
+- Caylent
+- Postman
+- Easy REST API
+- REST API Documentation
+- JSON
+comments: []
+---
+<p>Welcome to the first in our Caylent API Tutorials. This post aims to simplify the process of configuring <a href="https://www.getpostman.com/" target="_blank" rel="noopener">Postman</a> to enable you to best leverage Caylent's Easy REST API documentation. Each of these tutorials will be supported by a <a href="https://youtu.be/B8OGkZJP4xc" target="_blank" rel="noopener">YouTube video</a>.</p>
+<h3>Requirements</h3>
+<p>For this tutorial, you&rsquo;re going to need three things:</p>
+<ul>
+<li>An activated account with Caylent and the username and password. <a href="https://app.caylent.com/signup" target="_blank" rel="noopener">Sign up here</a> to complete this step.</li>
+<li><a href="https://github.com/caylent/postman-environment-template" target="_blank" rel="noopener">Caylent&rsquo;s Postman Environment JSON Template</a> downloaded from our Github repository. This file is a template of all the environment variables that you can use and store.</li>
+<li>And finally, have <a href="https://www.getpostman.com/" target="_blank" rel="noopener">Postman</a> itself downloaded and installed.</li>
+</ul>
+<h2>5 Steps to Leverage Caylent&rsquo;s Easy REST API Documentation</h2>
+<p>Once complete, follow these simple steps to configure and manage your environment variables.</p>
+<h3>Step 1</h3>
+<p>Open Postman to the Builder page.<br />
+Click on the cog in the right-hand corner and select &ldquo;Manage Environments.&rdquo;</p>
+<p><img class="aligncenter wp-image-2125 size-full" src="https://caylent.com/wp-content/uploads/2017/10/Manage-Environments.png" alt="Caylent&rsquo;s REST API Tutorial Manage Environments" width="597" height="285" /></p>
+<p>From here, select import and choose the downloaded Postman Environment JSON Template file.</p>
+<h3>Step 2</h3>
+<p>Once the import is successful, it&rsquo;s time to set up the environment variables according to your personal data. Do this by configuring the username and password to reflect your Caylent account information accordingly.</p>
+<h3>Step 3</h3>
+<p>Now within the environment template, check and uncheck each of the available variables as you want to use them. All environment variables are automatically enabled by default. So, be sure to tailor these accordingly to your needs.</p>
+<p>The available environment options are:</p>
+<ul>
+<li>aws_access_key and aws_secret_key: These are the credentials which allow Caylent&rsquo;s system to deploy your stack within your AWS account. If you haven't already done so, this is the point to add these here. For help with this, check out <a href="https://help.caylent.com/hc/en-us/articles/115009267588-Connect-Amazon-Web-Services" target="_blank" rel="noopener">this article</a> for how to connect Caylent with AWS Services.</li>
+<li>repo_username, repo_password, and repo_email: These are your Docker Hub repository credentials. With these, Caylent can deploy your application on each of your stacks if you have a private repository. These variables are only necessary if you need to set up access to a private repository. If using a public repo like WordPress, you can leave these blank&mdash;just uncheck the boxes.</li>
+<li>github_username and ssh_username: Caylent&rsquo;s system uses GitHub keys to auto-configure SSH access to instances within your stack. Postman will automatically default to your github_username unless you specify an ssh_username of your own.</li>
+<li>azure_app_id, azure_sub_id, azure_tenant_id, and azure_secret_key: Follow <a href="https://help.caylent.com/hc/en-us/articles/115009113967-Connect-Microsoft-Azure" target="_blank" rel="noopener">this link</a> to discover how to get these credentials and which ones to fill out.</li>
+</ul>
+<h3>Step 4</h3>
+<p>Once you&rsquo;ve enabled or disabled these options and updated your username and password, the next step is to select the environment that has just been saved: Caylent Template Env. This option is located in the right-hand corner of the Builder page.</p>
+<p><img class="aligncenter wp-image-2124 size-full" src="https://caylent.com/wp-content/uploads/2017/10/Caylent-Template-Env.png" alt="Caylent API Tutorial Template Env" width="601" height="300" /></p>
+<h3>Step 5</h3>
+<p>Once you&rsquo;ve completed all the above steps, you&rsquo;re ready to make use of our Caylent Easy REST API documentation. To access and leverage each of the Documents, click <a href="https://docs.caylent.com/" target="_blank" rel="noopener">here </a>to load the properties into Postman. The data fields will fill out according to the collection you choose.</p>
+<p>Example: Load the Login properties from <a href="https://docs.caylent.com/#bb3764f0-8349-f063-c6a4-42b93cc101d4" target="_blank" rel="noopener">here</a>. Hit &ldquo;Send.&rdquo; This will then take the environment token key through tests and save it into &ldquo;Postman.setGlobal variable.&rdquo; You can now go on to use other tests, leveraging that token in each of the calls to authorize and authenticate everything.</p>
+<p>Here&rsquo;s the video tutorial to guide you through this steps screen by screen.</p>
+<p>[embed]http://https://youtu.be/B8OGkZJP4xc[/embed]</p>
+<p>Watch the next Caylent API YouTube Tutorial here:&nbsp;<a id="creator-editor-title-link" dir="ltr" title="Setup SSH Access and Firewall Rules via Caylent API - Caylent Tutorial" href="https://youtu.be/ARj4a2k0ZxY" target="_blank" rel="noopener">Setup SSH Access and Firewall Rules via Caylent API</a></p>
+<p>&nbsp;</p>
+<p>Check out the next Caylent API Blog Tutorial now: <a href="https://caylent.com/stack-deployment-ssh-ec2-access-team-management/" target="_blank" rel="noopener">Caylent Stack Deployment with SSH EC2 Access and Team Management</a></p>

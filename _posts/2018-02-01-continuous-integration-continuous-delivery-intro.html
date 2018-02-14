@@ -1,0 +1,61 @@
+---
+layout: post
+status: publish
+published: true
+title: An Introduction to Continuous Integration and Continuous Delivery
+author:
+  display_name: Caylent Team
+  login: caylentTeam
+  email: hello@caylent.com
+  url: ''
+author_login: caylentTeam
+author_email: hello@caylent.com
+wordpress_id: 2515
+wordpress_url: https://caylent.com/?p=2515
+date: '2018-02-01 08:00:34 +0200'
+date_gmt: '2018-02-01 16:00:34 +0200'
+categories:
+- Continuous Delivery
+- Resources
+- Continuous Integration
+tags:
+- Continuous Delivery
+- Continuous Integration
+comments: []
+---
+<p>Continuous Integration (CI) and Continuous Delivery (CD) make up a very large topic, and there are differing opinions on what these terms mean and how they should be implemented. The key to success with CI/CD is to automate and monitor as much as you can practically. A well-tuned CI/CD pipeline will help your organization quickly deliver quality code to your customers.</p>
+<h1 style="text-align: center;">Summarizing Continuous Integration &amp; Continuous Delivery</h1>
+<h2>Continuous Integration</h2>
+<p>Continuous Integration is a development practice that ensures your application is always in a &ldquo;good&rdquo; state. This means that anything in your master or pre-production branch is in working order and never stays broken for long. In order to achieve this, it is essential to have broad, well-written unit tests so that code can be merged quickly. Optionally you may also have integration tests that ensure the pieces of your application work together properly. Integration tests are more effective when you have a CD pipeline that is deploying your master branch to a development environment and running the integration tests, either manually or automated. You must also have an alerting method in place for when (yes, when, not if) your integration tests fail to catch issues.</p>
+<p>Another key aspect of CI is testing any database migrations or config changes before production. Having a development environment that&rsquo;s similar to your production environment gives you a safe space to test these changes and reduces the likelihood that mistakes will make it to production, but it is recommended to have a staging environment in addition to your production and development environments.</p>
+<h2>Continuous Delivery</h2>
+<p>Continuous Delivery is an automated way to deploy your application to an environment. This can involve a number of automated or manual steps, including more integration testing, performance testing, or manual testing. The level of automation involved depends on your needs. Netflix is known for having a completely <a href="https://medium.com/netflix-techblog/how-we-build-code-at-netflix-c5d9bd727f15" target="_blank" rel="noopener">automated continuous delivery system</a>. Because deployments are automated and can happen at any time, your application should be designed in such a way that it is not affected by temporary outages when a new version is deployed. More on this later.</p>
+<p>A basic CD system will have two environments. One developer environment, where new features are tested and integrated. One production environment, where your application is exposed to the Internet.</p>
+<h2>Simple CI/CD Pipeline</h2>
+<p>Your CI pipeline is usually triggered when code is checked into an integration branch by a developer. Unit tests are run to ensure basic functionality is correct, and then, binaries are built. The binaries created could be a JAR or Zip file or even a Docker container.<br />
+The CD can be triggered after a successful build, or it can be timed. Typically, for dev environments, your CD pipeline will be triggered by every successful build. Deployment to production can be an automatic process or can require manual sign off.</p>
+<p><a href="https://caylent.com/wp-content/uploads/2018/01/CI-CD-blog-image.png"><img class="aligncenter size-full wp-image-2516" src="https://caylent.com/wp-content/uploads/2018/01/CI-CD-blog-image.png" alt="Continuous Integration and Continuous Delivery Pipeline" width="581" height="385" /></a><br />
+Getting a CI/CD pipeline up and running can take a lot of work. Projects like <a href="https://jenkins-ci.org/" target="_blank" rel="noopener">Jenkins</a>, <a href="https://www.jetbrains.com/teamcity/" target="_blank" rel="noopener">TeamCity</a>, and <a href="https://www.spinnaker.io/" target="_blank" rel="noopener">Spinnaker</a> can help you setup and manage deployments yourself, but that can be difficult, especially if you&rsquo;re starting from scratch with Jenkins. If you&rsquo;re looking for a hosted solution, products like <a href="https://goo.gl/ryZWVs" target="_blank" rel="noopener">Caylent</a>, <a href="https://www.heroku.com/" target="_blank" rel="noopener">Heroku</a>, or <a href="https://aws.amazon.com/elasticbeanstalk/" target="_blank" rel="noopener">Amazon&rsquo;s Elastic Beanstalk</a> provide easy-to-use solutions.</p>
+<h2>How to Code Your Applications</h2>
+<p>If you&rsquo;re not already thinking about microservices, then perhaps you should be.</p>
+<p>In order for CD to work well, you have to understand that your application may be restarted at any time, and if you&rsquo;re deploying to a cloud environment, this can happen without warning and is at the mercy of your cloud provider. Case in point: Many of you probably had your machines restarted recently due to the pervasive <a href="https://spectreattack.com/" target="_blank" rel="noopener">Meltdown and Spectre vulnerabilities</a>.</p>
+<p>Two things that can help your application restart gracefully are the use of rolling updates and the implementation of readiness checks. A readiness check can be as simple as waiting for your application&rsquo;s health check to respond &lsquo;OK&rsquo;. Most container orchestration systems support this.</p>
+<p>Another thing to keep in mind when designing and implementing new features is how these new features will interact with code already in production. You may want to deploy applications before everything is ready, and you also want to ensure that your services will function properly during a rolling update in which it&rsquo;s possible that not all services will have started. Thinking about backwards compatibility and using your dev environment test how the new features interact with the old ones are important parts of making sure your application integrates properly and will remove some headaches from your CD pipeline.</p>
+<h2>Common Issues</h2>
+<p>Engineers often run into urgent patch issues that must be deployed but the fix is mixed in with a bunch of partially completed features in master. One way to solve this is to use hotfix branches off of a release branch in <a href="https://git-scm.com/" target="_blank" rel="noopener">Git</a>. However, this does not always work out. A more reliable way to solve this problem is to make sure that all changes are made in a backwards compatible way. By doing so, you&rsquo;ll never need to worry whether the code in master is incompatible or won&rsquo;t work with the existing deployed application.</p>
+<p>The next part is monitoring your application and creating a set of alerts based on normal behaviors and load for your application in each environment. Yes, each environment&mdash;even dev!</p>
+<p>A lot of engineers allow their dev environments to become unstable. Having an unstable dev environment makes it difficult to test new features and makes any deployment of code to production suspect. Adding alerts in your dev environment also allows you to test your alerting. Along with your service health checks, monitoring allows you to understand how well your application is working and if the new code deployed is ready for production.</p>
+<h2>Integration Tests</h2>
+<p>Integration tests are an important part of making sure all of the pieces of your application work together, the way they should. A lot of people skip these tests because of how difficult it can be to setup an environment that can be easily tested. Using containers makes it easier to isolate individual parts of your application and create mocks that can exercise your application. <a href="https://docs.docker.com/compose/" target="_blank" rel="noopener">Docker Compose</a> is a fantastic tool for setting up small integration environments that you can run your tests against.</p>
+<p>These tests should also be automated and run after every check-in. Automate these tests if you can. Developers are more likely to run these tests if they are quick and automatic. Typically, these tests are run before or just after the application&rsquo;s binaries have been built.</p>
+<h2>Canaries Help You Avoid Disasters</h2>
+<p>There are a number of deployment strategies for how you move your latest code to production. Deploying a canary is one way to make sure new versions of your application are ready for production.</p>
+<p>A canary deployment is one of the more advanced ways to ensure that the code you&rsquo;re deploying is working as intended by deploying a single instance to an environment and monitoring it for a period of time. If any anomalies are detected, the instance is shut down and deployment to that environment won't proceed. All of this requires that you have a good understanding of your application&rsquo;s normal behavior and have alerting setup to assert that each instance is behaving correctly.</p>
+<h2>What Are You Waiting For?</h2>
+<p>We covered the basics of CI/CD in this article, and while this is a great starting point, CI/CD means a lot of different things to different people. While not everything in this article may apply to your application or organization, it should give you a good starting place to develop your own pipeline to help ensure code quality and reduce delivery times.</p>
+<p>Not sure what to do next? Check out Caylent&rsquo;s <a href="https://caylent.com/devops-handbook-introduction-summary/" target="_blank" rel="noopener">DevOps Handbook Synopsis Series</a> for more on Continuous Integration and Continuous Delivery the DevOps way.</p>
+<hr />
+<h3><img class="wp-image-2308 alignleft" src="https://caylent.com/wp-content/uploads/2017/12/BryanAbsher.jpg" alt="Contributor: Bryan Absher" width="300" height="200" /></h3>
+<h3><strong>Writer:&nbsp;<em>Bryan Absher</em></strong></h3>
+<p>Bryan Absher is a Software Engineer who is passionate about new and old technology. He is currently working on large scale distributed applications and single page web apps in the Pacific Northwest.</p>
+<p>Fun fact: Bryan has a cat and will dance your pants off.</p>

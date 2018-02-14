@@ -1,0 +1,62 @@
+---
+layout: post
+status: publish
+published: true
+title: A 5-Step Guide to Good Continuous Delivery
+author:
+  display_name: Stefan Thorpe
+  login: stefan
+  email: stefan@caylent.com
+  url: ''
+author_login: stefan
+author_email: stefan@caylent.com
+wordpress_id: 1967
+wordpress_url: https://caylent.com/?p=1967
+date: '2017-10-30 08:00:16 +0200'
+date_gmt: '2017-10-30 15:00:16 +0200'
+categories:
+- DevOps
+- Docker
+- Continuous Delivery
+tags:
+- Docker
+- Continuous Delivery
+- CI
+- CD
+- Continuous Deployment
+- SaaS
+- Software as a Service
+comments: []
+---
+<p>Here at <a href="http://caylent.com" target="_blank" rel="noopener">Caylent</a>, we believe one of the major keys to successful DevOps implementation is the complete automation of Continuous Delivery (CD) and Continuous Deployment. Achieving full CD with your IT team unlocks many of the benefits that the DevOps ecosystem has to offer and ensures that you release code swiftly and with fewer errors.</p>
+<p>Supported by the findings in the <a href="https://puppet.com/blog/2017-state-devops-report-here" target="_blank" rel="noopener">2017 State of DevOps report</a>, with the combined power of CD and DevOps high-performing IT teams can deploy code 46X more frequently than low-performing ones. Furthermore, you gain:</p>
+<ul>
+<li>Meantime to recover: 24X faster</li>
+<li>2555X faster Lead time: From starting code to delivery</li>
+<li>Considerably lower failure rate: Just 0-15% rather than 31-45%</li>
+</ul>
+<h2><strong>Why Continuous Delivery?</strong></h2>
+<p>CD aims to significantly reduce your risk level by enabling deployment of small, high-quality batches of code quickly and sustainably. The concept works in line with Continuous Integration, which focuses on helping your team prepare for deployment with ease.</p>
+<p>A very interesting theory to note is that CD has also been demonstrated to positively impact the level of happiness and engagement of your team.</p>
+<blockquote><p>Put simply, a better work process = high-quality code = high-quality products = happy customers = happy IT team.</p></blockquote>
+<h2>Continuous Delivery Vs. Continuous Deployment</h2>
+<p>The difference between the two is minimal, and often, the terms are used interchangeably; the variation only comes in at staging or pre-production with a manual acceptance test for Continuous Delivery. At this point, the product owner will manually merge and push the code to production.</p>
+<h2>How Docker Improves CD</h2>
+<p>Docker gives us the ability to build and distribute immutable artifacts so that we can retain the exact same build artifact through testing, pre-production, and production. In comparison to Chef, Puppet or other general server builders, Docker allows users to build first then push to servers, whereas Chef and Puppet users must build and modify the servers in real time. Once built, Docker allows you to move an artifact through the pipeline intact.</p>
+<p>This advantage improves the artifact&rsquo;s robustness and reduces the risk of failures and blockages in the production pipeline. Building an immutable artifact once also allows us to test the image repeatedly via local, QA, staging, and production environments. Rollbacks occur in seconds rather than minutes, and deployments are fast and straightforward. Finally, Docker further decouples server config from application deployment.</p>
+<h2><strong>The 5 Steps</strong></h2>
+<p>Caylent&rsquo;s best practices when it comes to using Docker to empower CD can be broken down into these 5 steps:</p>
+<h5><strong><em>1</em></strong></h5>
+<p>Where possible, build your packages once and once only. Then move your immutable artifact through your CD pipeline to test it from one repository to the next. As it migrates through the pipeline, leverage Docker&rsquo;s tagging system to promote your image and gain the most stability for deployment.</p>
+<h5><strong><i>2</i></strong></h5>
+<p>Decouple your code, database migrations, and infrastructure changes to independent pushes. Keep them separate and your code chunks as small as possible.</p>
+<h5><strong><i>3</i></strong></h5>
+<p>Run your deployment types in the exact same manner in each environment, and in at least one environment that&rsquo;s an identical mirror of production. Use the environment parameters and secrets within Docker to pass environment variables at run time without drastically changing your artifact. Consider changes to these as Infrastructure-level change.</p>
+<h5><strong><i>4</i></strong></h5>
+<p>Run tests as part of the container build process and automate the testing of all your deployments. Aim to combine builds and tests together to keep the log files intact and easy to decipher. If a build fails it will remain in the loop, rather than being promoted to the next environment.</p>
+<h5><strong><i>5</i></strong></h5>
+<p>Keep your stacks and environments similar. If you&rsquo;re running massive web stacks on your production site, this may be difficult in development and staging, but things like your content delivery network (CDN), proxies, and caches should all be replicated in staging.</p>
+<p>While Docker makes it easy to deploy code using CD, it&rsquo;s important to follow these best practices to build, test and deploy correctly, rather than falling into bad habits.</p>
+<p>In next week&rsquo;s blog, we&rsquo;ll cover the four main deployment types for Continuous Delivery with Docker. Click here for <a href="http://caylent.com/docker-continuous-delivery-deployment-types" target="_blank" rel="noopener">Docker and Continuous Delivery Deployment Types</a></p>
+<p>&nbsp;</p>
+<p><em><a href="https://app.caylent.com/signup" target="_blank" rel="noopener">Caylent </a>is a SaaS platform that helps software teams manage containers, clouds, and microservices. It is designed as a converged platform for Devs and Ops to collaborate and deploy infrastructure and containerized applications across multiple environments and cloud providers.</em></p>

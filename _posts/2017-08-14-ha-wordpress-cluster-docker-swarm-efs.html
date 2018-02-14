@@ -1,0 +1,167 @@
+---
+layout: post
+status: publish
+published: true
+title: High-Availability WordPress Cluster with Docker Swarm & EFS
+author:
+  display_name: JP La Torre
+  login: caylent
+  email: jp@caylent.com
+  url: ''
+author_login: caylent
+author_email: jp@caylent.com
+wordpress_id: 1889
+wordpress_url: https://caylent.com/?p=1889
+date: '2017-08-14 11:34:08 +0300'
+date_gmt: '2017-08-14 18:34:08 +0300'
+categories:
+- AWS
+- Docker
+tags:
+- DevOps
+- AWS
+- Docker
+- EFS
+- RDS
+- wordpress
+comments: []
+---
+<h3>Summary:</h3>
+<p>In this article, we'll cover step-by-step how to setup and deploy a High-availability Wordpress cluster based on Docker Swarm and Amazon's Elastic Filesystem (EFS).</p>
+<p>By following these simple steps, you'll have a clean install of Wordpress running on Docker Swarm:</p>
+<ul>
+<li>Create EFS volume</li>
+<li>Mount EFS globally</li>
+<li>Create RDS database</li>
+<li>Deploy Wordpress</li>
+<li>Scaling Wordpress</li>
+</ul>
+<p>Wordpress is by far the most popular CMS on the planet, with roughly 60% market share as of the time of this writing.</p>
+<p>As Wordpress users ourselves, and after sifting through many incomplete or outdated guides on the subject, we decided to share a DIY-approach to replicate some of the technology we are using at <a href="https://caylent.com" target="_blank" rel="noopener noreferrer">Caylent</a> to automate the deployment of HA Wordpress using&nbsp;Docker Swarm.</p>
+<p>With more businesses realizing the negative&nbsp;impact that downtime and poor performance can bring many are making the shift from running single servers to highly-available clusters, monoliths to microservices, and legacy apps to containers.</p>
+<p>One of the persistent problems has been that Wordpress does not scale very well, yet many high-traffic websites&nbsp;rely on it. We're going to solve this by using a pretty simple stack consisting of Docker Swarm, Amazon's EC2, EFS, Relational Database Service (RDS), and an Elastic Load Balancer (ELB).</p>
+<p>Let's get started!</p>
+<h3></h3>
+<h3>Prerequisites</h3>
+<p>For the sake of this guide, you'll need to have a few things already in place:</p>
+<ul>
+<li><a href="https://aws.amazon.com/" target="_blank" rel="noopener">AWS account</a></li>
+<li><a href="http://caylent.com/setup-a-high-availability-docker-swarm-stack-on-aws/" target="_blank" rel="noopener">High-availability stack</a></li>
+<li><a href="https://caylent.com/creating-a-high-availability-docker-swarm-on-amazon-web-services/" target="_blank" rel="noopener"><span style="font-weight: 400;">Docker Swarm setup</span></a></li>
+<li>SSH access to each&nbsp;EC2 instance</li>
+</ul>
+<p><span style="font-weight: 400;">I&nbsp;used Ubuntu 14.04 LTS running&nbsp;<code>kernel 3.13.0-91-generic</code>, though the process will work pretty much the same on most Debian-based operating systems.</span></p>
+<p>I highly recommend you read and follow our previous guides on building the stack and <a href="https://caylent.com/setup-a-ha-docker-swarm-stack-on-aws/" target="_blank" rel="noopener">installing Docker Swarm</a>&nbsp;as this article assumes you already have those essentials.</p>
+<h3></h3>
+<h3>Create EFS Volume in AWS Console</h3>
+<p>Log in to your AWS Console and navigate to <strong>EFS ></strong> <strong>Create file system</strong>.</p>
+<p>Next, select the VPC and assign mount targets according to the Availability Zones where your&nbsp;instances are located.<b></b></p>
+<p><img class="size-full wp-image-1931 aligncenter" src="https://caylent.com/wp-content/uploads/2016/06/EFS-Step-1.png" alt="" width="883" height="242" /><br />
+Step 2 of the EFS wizard is optional and lets you assign tags to your&nbsp;filesystem.</p>
+<p>Review the settings in Step 3 and click <strong>Create File System</strong>.</p>
+<h3><img class="size-full wp-image-1932 aligncenter" src="https://caylent.com/wp-content/uploads/2017/08/EFS-Step-3.png" alt="" width="896" height="572" /><b></b></h3>
+<h3></h3>
+<h3><b>Adjust Firewall Rules&nbsp;on EFS Security Group</b></h3>
+<p><span style="font-weight: 400;">If you followed our previous articles you should have one security group each for Swarm masters and Swarm workers.</span></p>
+<p><span style="font-weight: 400;">We need to add both these Swarm security groups to the EFS security group to allow inbound traffic over the NFS protocol.</span></p>
+<p>Navigate to EC2 > Network &amp; Security > Security Groups. Locate the security group that EFS used in the last step. Under the Inbound tab click <strong>Edit</strong>.</p>
+<p>Add one NFS (port 2049) inbound rule for each Docker Swarm security group. When you're done it should look like the image below.</p>
+<p><img class="size-full wp-image-1935 aligncenter" src="https://caylent.com/wp-content/uploads/2016/06/EFS-Security-Group-Inbound-Rules.png" alt="" width="1028" height="355" /></p>
+<p>&nbsp;</p>
+<p>These should be the only two entries. We suggest you don't allow All traffic for security reasons.</p>
+<p>Click <strong>Save</strong>.</p>
+<h3></h3>
+<h3><b>Install NFS and create mounts</b></h3>
+<p>Open up a terminal client, SSH into each EC2 instance on your cluster, and run the following commands on every machine.</p>
+<p>First, let's install the NFS drivers.</p>
+<p><code>sudo apt-get install nfs-common</code></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">On each machine, create our filesystem directory.</span></p>
+<p><code>sudo mkdir /mnt/efs</code></p>
+<p>&nbsp;</p>
+<p>Mount the EFS filesystem using the DNS address (replace <> brackets).</p>
+<p><code><span style="font-weight: 400;">sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 <your-EFS-DNS-Name>:/ /mnt/efs</span></code></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">On each instance make sure the DNS for your mount target is in the same Availability Zone to ensure the lowest possible latency.</span></p>
+<p><span style="font-weight: 400;">We can verify the mount in several different ways. We can check this with a plain </span><code>mount</code><span style="font-weight: 400;"> or </span><code>findmnt</code><span style="font-weight: 400;"> command, but </span><code>df -h</code><span style="font-weight: 400;"> will give a more human readable output, like this:</span></p>
+<p class="p1"><img class="wp-image-1942 alignleft" src="https://caylent.com/wp-content/uploads/2017/08/EFS-filesystem-check.png" alt="" width="1026" height="177" /></p>
+<h3></h3>
+<h3></h3>
+<h3></h3>
+<h3></h3>
+<h3></h3>
+<h3><b>Create a Wordpress directory inside the EFS mount</b></h3>
+<p>Type&nbsp;<code>sudo mkdir &ndash;p /mnt/efs/wordpress</code> into your terminal. You only need to do this on one machine since all instances now have the EFS volume mounted.</p>
+<p>We can easily verify that other instances in our cluster have access to this directory by typing <code>ls /mnt/efs</code> on each host.</p>
+<h3></h3>
+<h3><b>Mounting the volume&nbsp;at boot</b></h3>
+<p><span style="font-weight: 400;">We can mount the EFS volume&nbsp;automatically at boot by adding a line in the /etc/fstab file on each of the instances. This is optional but highly recommended.</span></p>
+<p><span style="font-weight: 400;">If you do not do this the mount will disappear upon system reboot and you will have to manually mount the volume again.</span></p>
+<p><code>sudo nano /etc/fstab</code></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">Add the following line to the end of your fstab file:</span></p>
+<p><span style="font-weight: 400;"><code><your-EFS-DNS-name>:/ /mnt/efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,_netdev 0 0</code></span></p>
+<p><span style="font-weight: 400;">You can easily confirm this works by performing a reboot and then verifying that the volume is mounted.</span></p>
+<h3></h3>
+<h3>Setup RDS database</h3>
+<p>Wordpress requires a relational database. MySQL is by far the most popular option, though&nbsp;others like MariaDB and PostgreSQL work fine (though you may need additional plugins).&nbsp;I'll be using MySQL.</p>
+<p>In the AWS Console, navigate to <strong>RDS > Launch a DB instance</strong>.</p>
+<p>Select<b> MySQL > Community Edition. </b>On the next screen, you will be prompted to&nbsp;choose an&nbsp;environment depending on your intended usage.&nbsp;Select&nbsp;<strong>Production</strong>.</p>
+<p>Check out the screenshot below to see how I setup my RDS database.</p>
+<p>Remember, we want a Multi-AZ RDS database. This introduces fault tolerance at the database level. Keep in mind that if you elect not to use&nbsp;Multi-AZ your database costs will be cut in half but the stack will have a single point of failure.</p>
+<p>AWS recommends at least 100 GB of storage if you use general purpose SSD.</p>
+<p>I am using a db.t2.medium instance size but your particular needs may vary. One of the benefits of using RDS is that you can change instance size later with relatively minimal&nbsp;disruption.</p>
+<p><img class="wp-image-1947 aligncenter" src="https://caylent.com/wp-content/uploads/2017/08/rds-mysql-creation-step-3.png" alt="" width="564" height="600" /></p>
+<p>Click <strong>Next Step</strong>.</p>
+<p>Now you're on Step 4, the final step in creating your RDS database. Select the VPC you used to create the EFS volume and EC2 instances.</p>
+<p>You can create a new security group specifically for RDS or use the default VPC security group. The EC2 instances will need inbound access on port 3306. I elected to use a new security group to&nbsp;separate things out a bit more.</p>
+<p>Give the database a unique name, like Wordpress.</p>
+<p><span style="font-weight: 400;">Click <strong>Launch</strong>.</span></p>
+<p><img class="aligncenter wp-image-1949" src="https://caylent.com/wp-content/uploads/2017/08/rds-mysql-creation-step-4.png" alt="" width="565" height="454" /></p>
+<p>&nbsp;</p>
+<h3>Deploy Wordpress</h3>
+<p>In your terminal, run the following commands on one of your Swarm Master nodes.<br />
+(<em><strong>N</strong><strong>ote:</strong></em> Replace bracketed <> items).</p>
+<pre><code>docker network create \
+--driver overlay \
+--subnet 10.0.9.0/24 \
+--gateway 10.0.9.254 \
+caylent-network</code></pre>
+<p>&nbsp;</p>
+<pre><code>docker service create --name wordpress \
+--publish 80:80 \
+--mount type=bind,source=/mnt/efs/wordpress,target=/var/www/html \
+-e WORDPRESS_DB_HOST=<strong><em><your-RDS-DNS-endpoint></em></strong>:3306 \
+-e WORDPRESS_DB_USER=dbMaster \
+-e WORDPRESS_DB_PASSWORD=<em><strong><your-RDS-password></strong></em> \
+-e WORDPRESS_DB_NAME=wordpress \
+-e WORDPRESS_TABLE_PREFIX=wp_ \
+--replicas 1 \
+--network caylent-network \
+wordpress:4.8.0-php7.1-apache</code></pre>
+<p>Don't worry that we're only running one container for the moment. We'll scale this service right after we finish our Wordpress setup.</p>
+<h3>Modify Directory Permissions</h3>
+<p><span style="font-weight: 400;">You <em>may</em> need to change the file and folder permissions on the Wordpress directory to allow proper read/write/execute access.</span></p>
+<pre><code>cd /mnt/efs/wordpress
+sudo chown www-data:www-data -R *
+sudo find . -type d -exec chmod 755 {} \;
+sudo find . -type f -exec chmod 644 {} \;</code></pre>
+<p>&nbsp;</p>
+<p><b style="color: inherit; font-family: inherit; font-size: 24.5px;">Finalize Wordpress Installation</b></p>
+<p>At this point, you should have a clean install of Wordpress running.</p>
+<p>You'll want to locate the machine that is running the singular&nbsp;Wordpress container.</p>
+<p>Run <code>docker service ps wordpress</code>&nbsp;in your terminal to see which host&nbsp;the container is running on.</p>
+<p>Note that if your container isn't running on the machine you're currently using, as was my case, you'll have to find&nbsp;the corresponding public IPv4 address from the AWS console.</p>
+<p>Fire up your browser and point it to that public IP.</p>
+<p>You'll be greeted with the familiar Wordpress setup page.</p>
+<p><img class="size-full wp-image-1937 aligncenter" src="https://caylent.com/wp-content/uploads/2017/08/wordpress-installation.png" alt="" width="2880" height="1654" /><br />
+Congratulations!&nbsp;You now have a fully fledged high-availability Wordpress install, backed by Docker Swarm and EFS.</p>
+<h3>Scaling Wordpress</h3>
+<p>Now that we've got Wordpress setup properly,&nbsp;you'll want to scale the service.</p>
+<p><code>$ docker service scale wordpress=10</code></p>
+<p><code><samp>wordpress scaled to 10</samp></code></p>
+<h3>High-availability Wordpress cluster conclusion</h3>
+<p>In this article, I demonstrated how to create a high-availability Wordpress cluster using Docker Swarm and EFS.</p>
+<p>This covers&nbsp;a typical&nbsp;<a href="https://en.wikipedia.org/wiki/N%2B1_redundancy" target="_blank" rel="noopener">N+1 redundant</a>&nbsp;setup&nbsp;that can handle&nbsp;single failures at every level - network, compute, storage, or database.</p>
+<p>If you're interested in automating this entire process, then I'd like to invite you to check out Caylent,&nbsp;a&nbsp;SaaS platform that makes it easy to deploy apps, like Wordpress, inside your own AWS account. Caylent&nbsp;automates the entire process covered here and a lot more. Best of all, it is free to get started.</p>
+<p>As always, we'd love your feedback and suggestions for future articles.</p>

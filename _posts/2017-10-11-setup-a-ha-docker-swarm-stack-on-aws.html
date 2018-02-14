@@ -1,0 +1,43 @@
+---
+layout: post
+status: publish
+published: true
+title: Setup a High-Availability Docker Swarm Stack on AWS
+author:
+  display_name: JP La Torre
+  login: caylent
+  email: jp@caylent.com
+  url: ''
+author_login: caylent
+author_email: jp@caylent.com
+wordpress_id: 2045
+wordpress_url: http://caylent.com/?p=2045
+date: '2017-10-11 09:00:14 +0300'
+date_gmt: '2017-10-11 16:00:14 +0300'
+categories:
+- DevOps
+- AWS
+- Docker
+tags:
+- DevOps
+- AWS
+- Docker
+comments: []
+---
+<h2>Summary:</h2>
+<p><span style="font-weight: 400;">In this article, you'll find several CloudFormation templates. They will help you set up and deploy a High-Availability Docker stack so you can easily install Docker Swarm on AWS. You can have a Docker-ready environment in minutes by launching each stack in the order below. Satisfying DevOps best practices means repeatable infrastructure and application deployments. The templates contained here are very similar to what you get when using </span><span style="font-weight: 400;">Caylent&nbsp;&ndash;&nbsp;</span><span style="font-weight: 400;"><a href="http://caylent.com/" target="_blank" rel="noopener">give it a try</a>, it's free.</span></p>
+<p><span style="font-weight: 400;">You can deploy each CloudFormation stack by clicking the 'Launch Stack' button underneath the description. They are intended to be used collectively. The Alert stack is optional but advisable.</span></p>
+<p><span style="font-weight: 400;">The Docker Stack is designed with Docker Swarm in mind, though it can be used with just about any scheduler or orchestration engine.</span></p>
+<p><span style="font-weight: 400;">If you&rsquo;re looking for ways to use these stacks, we recommend checking out our other articles, like </span><a href="http://caylent.com/ha-wordpress-cluster-docker-swarm-efs/" target="_blank" rel="noopener"><span style="font-weight: 400;">Creating a High-Availability WordPress cluster with Docker Swarm and EFS</span></a><span style="font-weight: 400;">.</span></p>
+<h2><span style="font-weight: 400;">Resources</span></h2>
+<p>These templates are completely free, open source, and available&nbsp;on <a href="https://github.com/caylent/cloudformation" target="_blank" rel="noopener">our GitHub</a>. If this guide helped you please consider contributing a pull request or giving the repo a star.</p>
+<p>Here are some additional resources to help you begin:</p>
+<h3>Deploy a VPC</h3>
+<p><span style="font-weight: 400;">Launch a VPC with 2 private and 2 public subnets in 2 availability zones for High-Availability Stacks.</span></p>
+<p><a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Caylent-HA-VPC-2azs&amp;templateURL=https://s3.amazonaws.com/cf-templates-xn0xe15cpz0d-us-east-1/ha-vpc-2azs.template.yaml" target="_blank" rel="noopener"><img class="alignnone" title="Launch a VPC" src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png" alt="Launch a VPC" width="144" height="27" /></a></p>
+<h3>Configure an Alert (optional)</h3>
+<p><span style="font-weight: 400;">Creates an SNS topic that alerts you if there is an event in your Stack(s).</span></p>
+<p><a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Caylent-HA-VPC-2azs&amp;templateURL=https://s3.amazonaws.com/cf-templates-xn0xe15cpz0d-us-east-1/alert.yaml" target="_blank" rel="noopener"><img class="alignnone" title="Launch an Alert" src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png" alt="Launch an Alert" width="144" height="27" /></a></p>
+<h3>Launch a High-Availability Docker Stack</h3>
+<p><span style="font-weight: 400;">Creates the infrastructure so you can run Docker Swarm in HA; includes two auto-scaling groups containing EC2 instances and a master load balancer.</span></p>
+<p><a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Caylent-HA-VPC-2azs&amp;templateURL=https://s3.amazonaws.com/cf-templates-xn0xe15cpz0d-us-east-1/ha-docker-stack.template.yaml" target="_blank" rel="noopener"><img class="alignnone" title="Launch a High-Availability Docker Stack" src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png" alt="Launch a High-Availability Docker Stack" width="144" height="27" /></a></p>

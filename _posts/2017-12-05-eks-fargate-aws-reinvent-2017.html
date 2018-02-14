@@ -1,0 +1,83 @@
+---
+layout: post
+status: publish
+published: true
+title: EKS and Fargate Announced at AWS re:Invent 2017
+author:
+  display_name: JP La Torre
+  login: caylent
+  email: jp@caylent.com
+  url: ''
+author_login: caylent
+author_email: jp@caylent.com
+wordpress_id: 2238
+wordpress_url: https://caylent.com/?p=2238
+date: '2017-12-05 07:00:50 +0200'
+date_gmt: '2017-12-05 15:00:50 +0200'
+categories:
+- AWS
+- Tools
+tags:
+- AWS
+- AWS re:Invent 2017
+- AWS Elastic Container Service for Kubernetes
+- AWS EKS
+- AWS Fargate
+comments: []
+---
+<h1><strong>AWS re:Invent 2017 Recap:</strong></h1>
+<p>The annual Amazon Web Services conference boasted upwards of 40,000 attendees at the end of November last year. As well as adding an extra day of content, AWS re:Invent 2017 also required a significant footprint expansion to accommodate the large crowd of attendees. The event adopted another hotel and an additional expo hall.</p>
+<p>Whether attending for the keynote speakers, deep-dive workshops or the unique networking opportunities, the yearly AWS re:Invent conference is a worthy calendar event for every cloud architect. AWS even provide a <a href="https://reinvent.awsevents.com/info/justification-letter/?trk=null" target="_blank" rel="noopener">Justification Letter</a> template to help attendees gain permission to go&mdash;worth remembering for next year. If like Caylent you plan to attend this year, we advise booking early. Tickets, hotels, and other venues tend to sell out quickly. Spaces typically become available in early Summer.</p>
+<p>In 2017, CEO Andy Jassy made two major announcements in his keynote speech regarding AWS&rsquo; 2017 compute offerings: AWS Elastic Container Service for Kubernetes (EKS) and AWS Fargate. These new features emphasize that containers are vitally important first-class citizens not just for AWS, but everyone.</p>
+<h2><strong>Amazon Elastic Container Service for Kubernetes (EKS)</strong></h2>
+<p><a href="https://aws.amazon.com/eks/" target="_blank" rel="noopener"><img class="wp-image-2240 aligncenter" src="https://caylent.com/wp-content/uploads/2017/12/AWSone.png" alt="Amazon Elastic Container Service for Kubernetes (EKS)" width="906" height="334" /></a></p>
+<p style="text-align: center;"><span style="font-size: xx-small;"><em>Source: Amazon Web Services</em></span></p>
+<p>Perhaps one of the most significant announcements coming out of re:Invent is AWS&rsquo; new managed Kubernetes service, fully compatible with Elastic Container Service (ECS). Not only is EKS pure vanilla upstream Kubernetes&mdash;and as such should work with existing tools and applications out of the box&mdash;it paves the way for a fully hosted solution in the future. Currently, its main value proposition lies in removing the burden of self-managing K8 master clusters on top of full integration with existing AWS services.</p>
+<p>Given the response to Cloud Native Computing Foundation (CNCF) that 63% of Kubernetes workloads were being deployed to the AWS cloud, it&rsquo;s no surprise the platform has been its focus in preparation for re:Invent 2017. Amazon EKS will launch with support for Kubernetes 1.7 and three most recent versions before adding any assist for future editions. Apply for preview access <a href="https://pages.awscloud.com/amazon-eks-preview.html" target="_blank" rel="noopener">here</a>.</p>
+<h3>Features include:</h3>
+<h4>Full cluster management and high availability:</h4>
+<ul>
+<li>A multi-AZ architecture that provides three Kubernetes masters distributed across three Availability Zones (AZ) for each cluster</li>
+<li>Automatic self-healing and replacement of unhealthy masters</li>
+<li>Automatic version upgrades and patching for masters</li>
+</ul>
+<h4>Security:</h4>
+<ul>
+<li>Identity Access Management (IAM) integration through cooperation with Heptio via Role Based Access Control (RBAC); Kubernetes&rsquo; native access control system</li>
+<li>EKS clusters to run inside personal VPCs allowing granular control over security groups and network ACLs</li>
+<li>Single tenant environments with no shared resources allowing for maximum security</li>
+<li>EKS complements the Kubernetes&rsquo; component Calico (by Tigera) to merge with the AWS VPC container network interface (CNI) plugin, allowing for granular control on a per-microservice basis using the Kubernetes API</li>
+<li>PrivateLink support will allow customers to access Kubernetes masters and the EKS service API endpoint internally within the VPC, eliminating the need to route traffic over public IP addresses</li>
+</ul>
+<h4>Logging:</h4>
+<p>As you might expect from an AWS service, EKS will integrate with other AWS logging and audit trail services including CloudWatch Logs and CloudTrail:</p>
+<ul>
+<li>Utilize CloudWatch Logs to view logs from Kubernetes masters</li>
+<li>Employ CloudTrail to view logs on API activity to the EKS service endpoint</li>
+</ul>
+<p>For the full spec, check out AWS EKS <a href="https://aws.amazon.com/eks/features/" target="_blank" rel="noopener">here</a>.</p>
+<h2><strong>AWS Fargate</strong></h2>
+<p><a href="https://aws.amazon.com/fargate/" target="_blank" rel="noopener"><img class="wp-image-2241 size-full aligncenter" src="https://caylent.com/wp-content/uploads/2017/12/AWS-Fargate.png" alt="AWS Fargate Process" width="1020" height="318" /></a></p>
+<p style="text-align: center;"><span style="font-size: xx-small;"><em>Source: Amazon Web Services</em></span></p>
+<p>Potentially more game-changing for AWS, Fargate will provide a full fleet of managed worker containers. The implications of this new managed service are huge. Fargate effectively eliminates the need to administer the underlying infrastructure (e.g., EC2) that has always previously been needed for Amazon&rsquo;s own ECS and other popular third-party schedulers (i.e., Swarm, Kubernetes, etc.)</p>
+<p>Put simply, think of Fargate as Heroku for containers on AWS. There are no servers to manage, and it functions as a full Platform-as-a-Service offering within ECS. The only input necessary is to define the container image, CPU and memory requirements, then determine the networking and IAM policies prior to deployment.</p>
+<p>While the announcement was somewhat upstaged by EKS, Fargate has the potential to be an even bigger deal for Amazon is it marks the organization&rsquo;s position in the growing Containers-as-a-Service (CaaS) market. Initially, Fargate will only support ECS, but there are plans to integrate the service with EKS sometime in 2018. Not long to wait.</p>
+<p><a href="https://aws.amazon.com/blogs/aws/aws-fargate/" target="_blank" rel="noopener"><img class="wp-image-2242 size-full aligncenter" src="https://caylent.com/wp-content/uploads/2017/12/AWS-Fargate-2.png" alt="AWS Fargate" width="900" height="271" /></a></p>
+<p style="text-align: center;"><span style="font-size: xx-small;"><em>Source: Amazon Web Services</em></span></p>
+<h3>Features include:</h3>
+<ul>
+<li>Per-second billing, which&mdash;depending on the workload&mdash; could have a huge impact on certain types of AWS customers</li>
+<li>Works with all the same ECS primitives, APIs, and AWS integrations that AWS customers are already accustomed to using</li>
+<li>ECS clusters now support Fargate and EC2 workloads together</li>
+<li>Fargate is available now in US-East, with no announcements yet about other regions</li>
+<li>Pricing is on-demand with 50 available configuration options for vCPU and Memory:
+<ul>
+<li>Per vCPU is $0.0506 per hour</li>
+<li>Per GB memory is $0.0127 per hour</li>
+</ul>
+</li>
+</ul>
+<p>For the full spec, check out AWS Fargate <a href="https://aws.amazon.com/fargate/?nc2=h_m1" target="_blank" rel="noopener">here</a>.</p>
+<p>Planning on using either of these services? Let us know in the comments if you see these new AWS features fitting into your production environment. As for Caylent, we will be undertaking our own evaluation on EKS and Fargate in the coming months.</p>
+<p>Looking for help running containers in the more immediate future? Look no further, <a href="https://caylent.com/" target="_blank" rel="noopener">Caylent</a> has you covered. Check out our new managed service offering. It&rsquo;s like having a full-time DevOps Engineer on staff for a fraction of the cost.</p>
+<p>Want to begin with AWS on Caylent?&nbsp;<a href="https://caylent.com/setup-a-ha-docker-swarm-stack-on-aws/" target="_blank" rel="noopener">Setup a High-Availability Docker Swarm Stack on AWS</a></p>

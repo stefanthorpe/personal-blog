@@ -1,0 +1,110 @@
+---
+layout: post
+status: publish
+published: true
+title: 'DevOps Handbook Series Part 3: Practice Continuous Integration'
+author:
+  display_name: Stefan Thorpe
+  login: stefan
+  email: stefan@caylent.com
+  url: ''
+author_login: stefan
+author_email: stefan@caylent.com
+wordpress_id: 2488
+wordpress_url: https://caylent.com/?p=2488
+date: '2018-01-16 08:00:50 +0200'
+date_gmt: '2018-01-16 16:00:50 +0200'
+categories:
+- DevOps
+- DevOps Handbook
+tags:
+- DevOps
+- The DevOps Handbook
+- CI
+- DevOps principles
+- Continuous Integration
+comments: []
+---
+<p>Our last summary installment focused on establishing automated testing practices to improve the level of fast feedback developers receive. This week, we look at mitigating the downward spiral that starts when developers work in isolated &ldquo;branches&rdquo; of the version control system.<br />
+Before we dive in though, make sure you&rsquo;re fully caught up on the previous installments in the series first.</p>
+<h1>The DevOps Handbook Summary Series (so far):</h1>
+<p><a href="https://caylent.com/devops-handbook-introduction-summary/" target="_blank" rel="noopener">Introduction Summary</a><br />
+<a href="https://caylent.com/devops-handbook-part-1-the-three-ways/" target="_blank" rel="noopener">1: Establishing the Three Ways</a><br />
+<a href="https://caylent.com/devops-handbook-part-1-the-three-ways-cont/" target="_blank" rel="noopener">1: The Three Ways Continued</a><br />
+<a href="https://caylent.com/devops-handbook-part-2-devops-methodology/" target="_blank" rel="noopener">2: Beginning the DevOps Methodology</a><br />
+<a href="https://caylent.com/devops-handbook-part-2-defining-devops-teams/" target="_blank" rel="noopener">2: Defining DevOps Teams</a><br />
+<a href="https://caylent.com/devops-handbook-part-3-continuous-delivery/" target="_blank" rel="noopener">3. Exploit Continuous Delivery</a></p>
+<h2>The Big Problem-Solver: Continuous Integration</h2>
+<p>The idea behind developers working in individual branches aimed to reduce the risk of committing changes directly to trunk/master/mainline. While at the same time allowing devs to work on alternate sections of the software system simultaneously.</p>
+<p>In practicality though, this process initiates a downward spiral of increasing technical debt that begins when teams try to merge their changes back into the trunk after working in isolation. The problem intensifies further as branch numbers and changes that need integration increase.</p>
+<p>Alternatively, practicing Continuous Integration (CI) nullifies a surprising number of these problems. All by making changes and trunk merges part of the normal flow of work. Rather than becoming a dreaded calendar date that sparks a multitude of errors and rework, these integrations are the opposite; daily non-events.</p>
+<p>Here&rsquo;s how:</p>
+<ul>
+<li><strong>&ldquo;Small Batch Development and What Happens When We Commit Code to Trunk Infrequently&rdquo;</strong><br />
+Branching strategies can be categorized in two ways:<br />
+&mdash; To improve individual productivity where everyone works in isolation and no-one can disrupt another&rsquo;s work. The result, though, is that collaboration is difficult, merging becomes a painstaking process, and overall visibility of work is non-existent.<br />
+&mdash; To improve team productivity where everyone works in a common area. The result is an unbroken line of development, and commits are clear. The downside is that commits can impact the entire project.<br />
+Merging branches back in sporadically only creates a &ldquo;merge hell&rdquo; resulting in chaos, delayed feedback, and rework. Utilizing small batch-size merges while optimizing for team productivity mitigates this significantly.</li>
+<li><strong>&ldquo;Adopt Trunk-Based Development Practices&rdquo;</strong><br />
+Embrace the practice of CI by encouraging developers to commit code to the trunk daily. This reduced batch size allows automated tests to run frequently and for teams to detect merge problems quicker. More importantly, smaller problems are much easier to swarm and fix.<br />
+&ldquo;Gated commits&rdquo; are another method to help teams retain a deployable state by configuring the pipeline to reject code commits which threaten it. These disciplines (daily code commits, small batch sizes, fast problem-solving, etc.) promote higher quality and faster deployment times.</li>
+</ul>
+<h2>Low-Risk Releases</h2>
+<p>To establish CI and make code commits a low-risk process, deployments need to be &ldquo;automated, repeatable, and predictable.&rdquo; To achieve this, reduce friction in production deployments by extending the deployment pipeline.</p>
+<ul>
+<li><strong>&ldquo;Automate Our Deployment Process&rdquo;</strong><br />
+Document the process of code commits (as in the <a href="https://caylent.com/devops-handbook-part-2-devops-methodology/" target="_blank" rel="noopener">value stream mapping activity</a>), then re-architect to streamline by reducing the number of handoffs. Encourage Devs and Ops to collaborate and:<br />
+&mdash; Use the same deployment method to every environment<br />
+&mdash; Smoke test deployments as well as all supporting systems<br />
+&mdash; Maintain consistently synchronized environments using the version control system implemented previously<br />
+Should any problems occur, pull the Andon cord and swarm as outlined before.</li>
+<li><strong>&ldquo;Enable Automated Self-Service Deployments&rdquo;</strong><br />
+Being able to self-deploy code in production and fix issues independent of Ops has become unusual practice for Devs due to increased security and compliance measures. Hence, Ops tend to perform code deployments to reduce these risks. However, to realize DevOps, both department&rsquo;s goals need to be aligned, shift reliance to automated testing and deployment to achieve the same risk mitigation and improve &ldquo;transparency, responsibility, and accountability.&rdquo; Ideally, code deployments can then be performed by either Devs or Ops without manual handoffs or holdups.</li>
+<li><strong>&ldquo;Integrate Code Deployment Into the Deployment Pipeline&rdquo;</strong><br />
+Automating the code deployment process makes it easier to integrate into the deployment pipeline. Furthermore, container technology also helps reduce the complexity of deployments. The combined benefits of these help teams to achieve deployment lead times of minutes or hours, rather than months.</li>
+<li><strong>"Decouple Deployments From Releases"</strong><br />
+To overcome the problems that occur during simultaneous production deployments and feature releases it makes sense to decouple the two from each other.</li>
+</ul>
+<p>The following two categories of release patterns can help ensure fast and frequent production deployments while reducing the impact and risk of any deployment errors:</p>
+<ul>
+<li><strong>&ldquo;Environment-Based Release Patterns&rdquo;</strong><br />
+<em>&mdash; Blue-green deployment:</em><br />
+Deploy to two or more environments, while sending traffic (by configuring load balancers) to only one. Following new code commits, traffic can be moved to the corresponding environment, and little or no application changes are required. See image below.<a href="https://caylent.com/wp-content/uploads/2018/01/Blue-Green-Deployment-Patterns.png"><img class="aligncenter wp-image-2489" src="https://caylent.com/wp-content/uploads/2018/01/Blue-Green-Deployment-Patterns.png" alt="Blue-Green Deployment Patterns" width="380" height="90" /></a></p>
+<h5 style="text-align: center;"><em>Blue-Green Deployment Patterns: The DevOps Handbook (1st ed. 2016) Kim et al.</em></h5>
+<p>(For more on the different deployment types available, check out our article <a href="https://caylent.com/docker-continuous-delivery-deployment-types/" target="_blank" rel="noopener">Docker &amp; Continuous Delivery Deployment Types</a>.)<br />
+<em>&mdash; Database changes:</em><br />
+Address the problems that occur by having one database support different application versions by either creating two databases (each application version has its own database) or by decoupling the release of database changes from application changes.<br />
+<em>&mdash; Canary and cluster immune system release patterns:</em><br />
+The design behind this pattern is based on a miner&rsquo;s tradition of using a canary to detect toxic gases. In the case of code deployment, &ldquo;canary release&rdquo; monitors the software during code commits to ensure environment maintenance. Rollbacks are then easier to implement should anything be flagged.</p>
+<p><a href="https://caylent.com/wp-content/uploads/2018/01/The-Canary-Release-Pattern.png"><img class="aligncenter wp-image-2490" src="https://caylent.com/wp-content/uploads/2018/01/The-Canary-Release-Pattern.png" alt="The Canary Release Pattern" width="400" height="239" /></a></p>
+<h5 style="text-align: center;"><em>The Canary Release Pattern: The DevOps Handbook (1st ed. 2016) Kim et al.</em></h5>
+<ul>The cluster immune system is an extension of the canary release to automatically roll back on code should any user-facing performance results deviate from expectations.</ul>
+</li>
+<li><strong>&ldquo;Application-Based Patterns to Enable Safer Releases&rdquo;</strong><br />
+Modify the application to release certain application functions selectively on a per feature basis by making small configuration changes only.<br />
+&mdash; Feature toggles: A mechanism by which we can permit or restrict features without the need for a production code deployment. This capability enables teams to roll back with ease, downgrade performance with grace, and increase resilience thanks to a service-oriented architecture.<br />
+&mdash; Dark launches: An expanded version of feature toggling, dark launching deploys all functionality into production while keeping users in the dark. Large or risky changes can be fully tested under production-like loads to ensure confidence in the service before it is launched.</li>
+<li><strong>&ldquo;Survey of Continuous Delivery and Continuous Deployment in Practice&rdquo;</strong><br />
+Over the years, the definitions of these concepts have changed organically and should be defined individually by an organization according to its requirements. Form is less important than outcome. According to the Handbook, &ldquo;Deployments should be low-risk, push-button events we can perform on demand.&rdquo;</li>
+</ul>
+<h2>Choosing the Right Architecture</h2>
+<p>Many near-death experiences can be attributed to architectural problems. Companies both large and small will go through many rewrites in their efforts to evolve and address these issues. It is overcoming the challenge of migrating from one architecture to another that is necessary to achieve DevOps organizational goals.</p>
+<ul>
+<li><strong>&ldquo;An Architecture That Enables Productivity, Testability, and Safety&rdquo;</strong><br />
+As defined in <a href="https://caylent.com/devops-handbook-part-2-defining-devops-teams/" target="_blank" rel="noopener">Part 2</a>, loosely-coupled architecture establishes a productive and safe environment for (two-pizza sized) teams to make small changes with low-risk. Service-oriented architecture&mdash;based on layers of dependable services&mdash;can be hugely beneficial for team&rsquo;s flexibility and scaling, and subsequently, productivity too.</li>
+<li><strong>&ldquo;Architectural Archetypes: Monoliths vs. Microservices&rdquo;</strong><br />
+Making architectural choices is entirely dependent on the organization in question. Many factors (such as stage in product life cycle, time to market, functionality, etc.) can have an impact on the choice of monoliths over microservices. But as an organization changes, so will architectural needs too. By understanding the evolution of these changes, teams can adapt/migrate their architecture accordingly. See the table below for the three major architectural archetypes.</li>
+</ul>
+<p><a href="https://www.slideshare.net/RandyShoup/from-monolith-to-microservices-craftconf-2015" target="_blank" rel="noopener"><img class="aligncenter wp-image-2491" src="https://caylent.com/wp-content/uploads/2018/01/Architectural-Archetypes.png" alt="Architectural Archetypes" width="400" height="490" /></a></p>
+<h5 style="text-align: center;"><em>Architectural Archetypes (Source: Shoup, &ldquo;From the Monolith to Microservices.&rdquo;) The DevOps Handbook (1st ed. 2016) Kim et al.</em></h5>
+<ul>
+<li><strong>&ldquo;Use the Strangler Application Pattern to Safely Evolve Our Enterprise Architecture&rdquo;</strong><br />
+<blockquote><p>&ldquo;They seed in the upper branches of a fig tree and gradually work their way down the tree until they root in the soil. Over many years they grow into fantastic and beautiful shapes, meanwhile strangling and killing the tree that was their host.&rdquo;</p></blockquote>
+<p>The &ldquo;strangler application&rdquo; practice inspired by these Australian vines is when existing functionality is placed behind an application&rsquo;s API and services are accessed through &ldquo;versioned services.&rdquo; The process seeks to slowly supplant a legacy, monolithic application with a new service-oriented architecture.</li>
+</ul>
+<p>Throughout Part 3, we have endeavored to implement architecture and technical practices that encourage the fast flow of work between Dev and Ops. Up next in Part 4, The DevOps Handbook looks at establishing The Second Way and the technical practices of feedback.</p>
+<p>Want to kick-start your DevOps transformation? We invite you to consider a <a href="https://goo.gl/HhAV7S" target="_blank" rel="noopener">Caylent subscription</a>. For a monthly fee, your team receives full architecture, scalability, CI/CD, and container orchestration capabilities plus assistance 24/7/365.<br />
+Free your team up to concentrate on application development and delivering value quickly and safely to your customers.</p>
+<hr />
+<p><span style="font-size: xx-small;">Reference material:<br />
+Kim, G., Debois, P., Willis, J., &amp; Humble, J. (2016). <em><a href="https://www.amazon.com/DevOps-Handbook-World-Class-Reliability-Organizations/dp/1942788002" target="_blank" rel="noopener">The DevOps handbook: how to create world-class agility, reliability, and security in technology organizations</a>.</em> Portland, OR: IT Revolution Press, LLC.</span></p>
