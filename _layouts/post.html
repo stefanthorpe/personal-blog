@@ -12,13 +12,17 @@ layout: default
                 {% if page.subtitle %}
                 <h2 class="subheading">{{ page.subtitle }}</h2>
                 {% endif %}
+                {% if page.date %}
                 <p class="meta">Posted by {% if page.author.display_name %}{{ page.author.display_name }}{% else %}{{ site.title }}{% endif %} on {{ page.date | date: "%B %-d, %Y" }}</p>
+                {% endif %}
                 <a href="#post" class="page-scroll"><i class="fa fa-fw fa-2x fa-arrow-down"></i></a>
               </div>
             </div>
+            {% if page.header-img %}
             <div class="col-xs-12">
 				<img class="post-heading-img" src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}">
 			</div>
+            {% endif %}
         </div>
     </div>
 </header>
