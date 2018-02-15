@@ -576,9 +576,13 @@ body {
   background-size: cover;
   -o-background-size: cover;
   margin-bottom: 50px;
+  background: url(../img/bg-pattern.png), linear-gradient(to left, #7b4397, #dc2430);
   .site-heading, .post-heading, .page-heading {
     padding: 100px 0 50px;
     color: white;
+  }
+  .post-heading-img {
+	  min-height:700px;
   }
   .site-heading, .page-heading {
     text-align: center;
@@ -624,7 +628,7 @@ body {
 @media only screen and (min-width: 768px) {
   .intro-header {
     .site-heading, .post-heading, .page-heading {
-      padding: 150px 0;
+      padding: 100px 0 20px 0;
     }
   }
 }
