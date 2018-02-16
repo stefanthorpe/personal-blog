@@ -1,21 +1,27 @@
 ---
-layout: page
+layout: default
 status: publish
 published: true
 title: Schedule a Demo
-author:
-  display_name: JP La Torre
-  login: caylent
-  email: jp@caylent.com
-  url: ''
-author_login: caylent
-author_email: jp@caylent.com
-wordpress_id: 2043
-wordpress_url: http://caylent.com/?page_id=2043
-date: '2017-10-06 21:59:32 +0300'
-date_gmt: '2017-10-06 21:59:32 +0300'
-categories: []
-tags: []
-comments: []
 ---
-<p><iframe style="width: 100%; height: 650px;" src="https://calendly.com/stefan-thorpe/" width="300" height="150" frameborder="0" scrolling="yes"></iframe></p>
+
+<!-- schedule demo Header -->
+<header id="header" class="intro-header bg-primary text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+              <div class="post-heading">
+                <h1>{{ page.title }}</h1>
+              </div>
+            </div>
+        </div>
+    </div>
+</header>
+<hr>
+<section id="schedule-demo">
+    <div class="container calendy-wrapper">
+        <div class="row">
+            <p><iframe style="width: 100%; height: 650px;" src="https://calendly.com/stefan-thorpe/" width="300" height="150" frameborder="0" scrolling="yes"></iframe></p>
+        </div>
+    </div>
+</section>

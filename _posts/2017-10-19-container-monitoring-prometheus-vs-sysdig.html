@@ -3,6 +3,7 @@ layout: post
 status: publish
 published: true
 title: 'Container Monitoring: Prometheus and Grafana Vs. Sysdig and Sysdig Monitor'
+header-img: "img/container-monitoring.png"
 author:
   display_name: Stefan Thorpe
   login: stefan
@@ -30,6 +31,7 @@ tags:
 - Sysdig Monitor
 comments: []
 ---
+{% raw %}
 <p>Since its debut in 2013, Docker has exploded in popularity, and the company has completely revolutionized the way we manage applications. Articles no longer discuss the reasons why you should be adopting containers, but speak more about dealing with the challenges involved with widespread container development. Containers add speed and boost performance within the development process, but bring additional complexity in the form logging, orchestration, security, and visibility. However, dealing with scaling issues, their ephemeral nature, and the sheer volume of data involved with container clusters are the challenges that container monitoring solutions like <a href="https://github.com/prometheus" target="_blank" rel="noopener">Prometheus</a> and <a href="https://github.com/draios/sysdig" target="_blank" rel="noopener">Sysdig</a> can help to address.</p>
 <p>This guide is designed to help you compare two of the major solutions available for collecting the metrics you need. We&rsquo;ll examine <a href="https://github.com/prometheus" target="_blank" rel="noopener">Prometheus</a> and <a href="https://github.com/draios/sysdig" target="_blank" rel="noopener">Sysdig</a>&mdash;both highly popular container monitoring solutions&mdash;alongside the visualization tools (Grafana and Sysdig Monitor respectively) that complement them both to give you full visibility inside every container.</p>
 <p>I&rsquo;ve created evaluation criteria which assess the two container monitoring solutions by the ease of deployment; the intricacy of the metrics the tool provides; the aggregation level; and the alerting capability each solution offers. For the visualization tools, I&rsquo;ve evaluated the installation; the level of integration with its host monitoring solution; how easy it is to customize to your own specifications; and the general layout and feel.</p>
@@ -116,3 +118,4 @@ comments: []
 <p>In addition, Sysdig can become quite costly per year as a hosted solution, while Prometheus is open source and free. Both tools are backed by active communities which can be tapped into for help and support, though Prometheus&rsquo; is the larger and more established of the two.</p>
 <p>In short, the right tool for you will end up being the cost and your preference overall, as both will scale and likely achieve what you need.</p>
 <p>Alternatively, get started using <a href="https://app.caylent.com/signup/" target="_blank" rel="noopener">Caylent</a> today! The DevOps container management platform that helps software teams manage containers, clouds, and microservices with ease.</p>
+{% endraw %}

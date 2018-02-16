@@ -196,7 +196,7 @@ header {
 
 @media (min-width: 768px) {
   header {
-    min-height: 100%;
+    // min-height: 100%;
     .header-content {
       text-align: left;
       padding: 0;
@@ -566,6 +566,9 @@ body {
 }
 
 // post styles
+.post-heading-img {
+    width: 100%;
+}
 
 .intro-header {
   background: no-repeat center center;
@@ -580,9 +583,6 @@ body {
   .site-heading, .post-heading, .page-heading {
     padding: 100px 0 50px;
     color: white;
-  }
-  .post-heading-img {
-	  min-height:700px;
   }
   .site-heading, .page-heading {
     text-align: center;
