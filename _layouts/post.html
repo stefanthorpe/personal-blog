@@ -49,17 +49,16 @@ layout: default
 				{{ content }}
 
                 <hr>
-
-		<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                <!-- jekynewage google ads -->
-                <ins class="adsbygoogle"
-                    style="display:block"
-                    google-ad-client="ca-pub-2366223703492009"
-                    data-ad-slot="2973388149"
-                    data-ad-format="auto"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
+    <!-- Google ADS mobile block -->
+    {% if site.google_ad_client %}
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+     (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "{{ site.google_ad_client }}",
+        enable_page_level_ads: true
+        });
+    </script>
+    {% endif %}
 
                 <ul class="pager">
                     {% if page.previous.url %}
