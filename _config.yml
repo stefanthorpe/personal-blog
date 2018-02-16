@@ -8,8 +8,8 @@ url: "https://stefanthorpe.github.io" # the base hostname & protocol for your si
 
 #Google Ad Words Data from scripts code (using Google responsive options) and ad client
 #data-ad-slot: 2973388149
-#data-ad-client: ca-pub-9204963049240271
-#google_ad_client: ca-pub-9204963049240271
+data-ad-client: ca-pub-9204963049240271
+google_ad_client: ca-pub-2366223703492009
 
 google_analytics: "UA-45771879-1"
 addthis_id: ra-5a8633753854f0c1
