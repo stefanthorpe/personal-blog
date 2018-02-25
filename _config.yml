@@ -1,7 +1,7 @@
 # Site settings
 title: Stefan Thorpe
 email: stefan.thorpe@gmail.com
-description: A jekyll template for landing pages, portfolio and blogging
+description: 
 
 baseurl: "" # the subpath of your site, e.g. /blog/ (If you use organization leave empty)
 url: "https://stefanthorpe.github.io" # the base hostname & protocol for your site
